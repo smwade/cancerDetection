@@ -1,0 +1,7 @@
+ipython
+numpy
+scipy
+matplotlib
+seaborn
+tensorflow==1.14
+
