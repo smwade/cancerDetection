@@ -1,7 +1,10 @@
 ipython
+ipykernel
 numpy
 scipy
 matplotlib
 seaborn
 tensorflow==1.14
+PrettyTable
+Pillow
 
