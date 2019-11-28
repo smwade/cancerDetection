@@ -1,4 +1,5 @@
 ipython
+ipykernel
 numpy
 scipy
 matplotlib

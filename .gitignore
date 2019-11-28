@@ -1,4 +1,41 @@
-.ipynb_checkpoints/
-venv/
+**/.ipynb_checkpoints/
+**/venv
 **/mlruns
+**/data
+**/.vscode
+**/.DS_Store
 
+others/
+
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+*.lol
+*.files
+*.fls
+*.fdb_latexmk
+
+
+# other
+*.pyc
