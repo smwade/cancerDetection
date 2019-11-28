@@ -3,15 +3,16 @@ from os.path import join
 import pickle
 import cv2
 from glob import glob
+import numpy as np
 from collections import defaultdict
 
-from cancer.utils.utils import read_dat_file
-from cancer.variables import BASE_DATA_DIR
+from cancer.utils.utils import read_dat_file, read_bmp
+from cancer.variables import BASE_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
 
 
-def get_smear():
+def get_smear(paths=True, flat=False):
     data = {}
-    DATA_DIR = join(BASE_DATA_DIR, 'SMEAR2005', 'New database pictures')
+    DATA_DIR = join(BASE_DATA_DIR, 'SMEAR2005', 'pictures')
     for folder in os.listdir(DATA_DIR):
         if folder == '.DS_Store':
             continue
@@ -21,12 +22,26 @@ def get_smear():
             basename = os.path.basename(mask_path)
             img_path = join(DATA_DIR, folder, basename.replace('-d',''))
             iamge_list.append(img_path)
-            mask_list.append(mask_list)
+            mask_list.append(mask_path)
         data[folder] = {
             'imgs': iamge_list,
             'masks': mask_list
         }
-    return data
+    if not flat:
+        return data
+    
+    imgs, masks, labels = [], [], []
+    for val in ABNORMAL_CELL_TYPES_SMEAR:
+        for img_path, mask_path in zip(data[val]['imgs'], data[val]['masks']):
+            imgs.append(read_bmp(img_path))
+            masks.append(read_bmp(mask_path))
+            labels.append(1)
+    for val in NORMAL_CELL_TYPES_SMEAR:
+        for img_path, mask_path in zip(data[val]['imgs'], data[val]['masks']):
+            imgs.append(read_bmp(img_path))
+            masks.append(read_bmp(mask_path))
+            labels.append(0)
+    return np.stack(imgs), np.stack(masks), np.array(labels).reshape((-1,1))
             
 
 def get_sipakmed(cache=True):

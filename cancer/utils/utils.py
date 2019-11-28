@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 
 def read_bmp(img_path):
-    cv2.imread(img_path)
+    return cv2.imread(img_path)
 
 def read_dat_file(path):
     return np.loadtxt(path, delimiter=',')
@@ -37,3 +37,20 @@ def plot_segment(img, segments):
 
     plt.axis('off')
     plt.show()
+
+def get_min_and_max_images(img_list):
+    g_min, g_max = np.inf, 0
+    for img in img_list:
+        cur_max, cur_min = max(img.shape[0], img.shape[1]), min(img.shape[0], img.shape[1])
+        if cur_max > g_max:
+            g_max = cur_max
+        if cur_min < g_min:
+            g_min = cur_min
+    return g_max, g_min
+
+def pad_and_center(img, shape):
+    arr = np.zeros(shape, np.int8)
+    h_offset = (shape[0] // 2) - (img.shape[0] // 2)
+    w_offset = (shape[1] // 2) - (img.shape[1] // 2)
+    arr[h_offset:img.shape[0]+h_offset, w_offset:img.shape[1]+w_offset] = img
+    return arr
