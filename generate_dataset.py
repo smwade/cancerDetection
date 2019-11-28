@@ -12,6 +12,9 @@ BASE_DIR = '/Users/seanwade/Desktop/data'
 
 data = get_sipakmed()
 
+image_list = []
+mask_list = []
+
 for cell_type in NORMAL_CELL_TYPES_SIP:
     d = data[cell_type]
     for img_path, cyto_polys in zip(d['imgs'], d['cytos']):
@@ -32,6 +35,8 @@ for cell_type in NORMAL_CELL_TYPES_SIP:
         
         cv2.imwrite(join(BASE_DIR, 'normal', 'images', img_name), img)
         cv2.imwrite(join(BASE_DIR, 'normal', 'masks', mask_name), mask)
+        image_list.append(img)
+        mask_list.append(mask)
 
 for cell_type in ABNORMAL_CELL_TYPES_SIP:
     d = data[cell_type]
@@ -53,3 +58,28 @@ for cell_type in ABNORMAL_CELL_TYPES_SIP:
         
         cv2.imwrite(join(BASE_DIR, 'abnormal', 'images', img_name), img)
         cv2.imwrite(join(BASE_DIR, 'abnormal', 'masks', mask_name), mask)
+
+        image_list.append(img)
+        mask_list.append(mask)
+
+    images = np.array(image_list)
+    masks = np.array(mask_list)
+
+    def unison_shuffled_copies(a, b):
+        assert len(a) == len(b)
+        p = np.random.permutation(len(a))
+        return a[p], b[p]
+
+    images, masks = unison_shuffled_copies(images, masks)
+
+    mid = len(images) - (len(images) // 4)
+    train_volume, test_volume = images[:mid], images[mid:]
+    train_labels, test_labels = images[:mid], images[mid:]
+
+    np.save(join(BASE_DIR, 'train-volume.npy'), train_volume)
+    np.save(join(BASE_DIR, 'test-volume.npy'), test_volume)
+    np.save(join(BASE_DIR, 'train-labels.npy'), train_labels)
+    np.save(join(BASE_DIR, 'test-labels.npy'), test_labels)
+
+    np.save(join(BASE_DIR, 'images_arr.npy'), images)
+    np.save(join(BASE_DIR, 'masks_arr.npy'), masks)
