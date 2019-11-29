@@ -6,7 +6,7 @@ from glob import glob
 import numpy as np
 from collections import defaultdict
 
-from cancer.utils.utils import read_dat_file, read_bmp
+from cancer.utils import read_dat_file, read_bmp
 from cancer.variables import BASE_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
 
 
