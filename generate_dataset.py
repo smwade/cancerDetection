@@ -5,36 +5,51 @@ import numpy as np
 
 from cancer.datasets import get_sipakmed
 from cancer.variables import ABNORMAL_CELL_TYPES_SIP, NORMAL_CELL_TYPES_SIP, BASE_DATA_DIR
-from cancer.utils.utils import read_bmp
+from cancer.utils import read_bmp
 
 
 def process_sipkamed(out_dir, width, height):
     data = get_sipakmed(cache=True)
 
+    if not os.path.exists(join(out_dir, 'normal')):
+        os.makedirs(join(out_dir, 'normal'))
+    if not os.path.exists(join(out_dir, 'abnormal')):
+        os.makedirs(join(out_dir, 'abnormal'))
+    if not os.path.exists(join(out_dir, 'normal', 'images')):
+        os.makedirs(join(out_dir, 'normal', 'images'))
+    if not os.path.exists(join(out_dir, 'normal', 'masks')):
+        os.makedirs(join(out_dir, 'normal', 'masks'))
+    if not os.path.exists(join(out_dir, 'abnormal', 'images')):
+        os.makedirs(join(out_dir, 'abnormal', 'images'))
+    if not os.path.exists(join(out_dir, 'abnormal', 'masks')):
+        os.makedirs(join(out_dir, 'abnormal', 'masks'))
+        
+
     image_list = []
     mask_list = []
 
-    # for cell_type in NORMAL_CELL_TYPES_SIP:
-    #     d = data[cell_type]
-    #     for img_path, cyto_polys in zip(d['imgs'], d['cytos']):
-    #         img = read_bmp(img_path)
-    #         mask = np.zeros(img.shape[:2],dtype=np.uint8)
-    #         for poly in cyto_polys:
-    #             poly = np.expand_dims(poly, axis=0).astype(int)
-    #             #cv2.fillPoly(mask, poly, 255)
+    for cell_type in NORMAL_CELL_TYPES_SIP:
+        d = data[cell_type]
+        for img_path, cyto_polys in zip(d['imgs'], d['cytos']):
+            img = read_bmp(img_path)
+            mask = np.zeros(img.shape[:2],dtype=np.uint8)
+            for poly in cyto_polys:
+                poly = np.expand_dims(poly, axis=0).astype(int)
+                #cv2.fillPoly(mask, poly, 255)
 
-    #         img = cv2.resize(img,(width,height))
-    #         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    #         mask = cv2.resize(mask,(width,height))
+            img = cv2.resize(img,(width,height))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            mask = cv2.resize(mask,(width,height))
             
-    #         img_name = cell_type + os.path.basename(img_path)
-    #         img_name = img_name.replace('.bmp','.png')
-    #         mask_name = img_name.replace('.','_mask.')
+            img_name = cell_type + os.path.basename(img_path)
+            img_name = img_name.replace('.bmp','.png')
+            # mask_name = img_name.replace('.','_mask.')
+            mask_name = img_name
             
-    #         cv2.imwrite(join(out_dir, 'normal', 'images', img_name), img)
-    #         cv2.imwrite(join(out_dir, 'normal', 'masks', mask_name), mask)
-    #         image_list.append(img)
-    #         mask_list.append(mask)
+            cv2.imwrite(join(out_dir, 'normal', 'images', img_name), img)
+            cv2.imwrite(join(out_dir, 'normal', 'masks', mask_name), mask)
+            image_list.append(img)
+            mask_list.append(mask)
 
     for cell_type in ABNORMAL_CELL_TYPES_SIP:
         d = data[cell_type]
@@ -52,7 +67,8 @@ def process_sipkamed(out_dir, width, height):
             
             img_name = cell_type + os.path.basename(img_path)
             img_name = img_name.replace('.bmp','.png')
-            mask_name = img_name.replace('.','_mask.')
+            #mask_name = img_name.replace('.','_mask.') TODO : for Augmentor
+            mask_name = img_name
             
             cv2.imwrite(join(out_dir, 'abnormal', 'images', img_name), img)
             cv2.imwrite(join(out_dir, 'abnormal', 'masks', mask_name), mask)
