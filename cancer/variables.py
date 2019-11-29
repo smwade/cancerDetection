@@ -1,4 +1,4 @@
-BASE_DATA_DIR = '/Users/seanwade/projects/cancerDetection/data'
+BASE_DATA_DIR = '/home/seanwade/sean/data'
 
 ABNORMAL_CELL_TYPES_SMEAR = [
     'severe_dysplastic',
