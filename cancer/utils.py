@@ -15,28 +15,83 @@ def read_bmp(img_path):
 def read_dat_file(path):
     return np.loadtxt(path, delimiter=',')
 
-
-def mask():
-    img = cv2.imread('lena.jpg')
-    mask = cv2.imread('mask.png',0)
-    res = cv2.bitwise_and(img,img,mask = mask)
-
 def convert_array_to_poly(arr):
     return arr.flatten().tolist()
 
 def generate_mask(img, poly):
-    mask = Image.new('L', img.size, 0)
+    w, h, _= img.shape
+    mask = Image.new('L', (w, h), 0)
     ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=1, fill='#ffffff')
     return np.array(mask)
 
-def plot_segment(img, segments):
-    plt.figure(figsize=(15,15))
-    plt.imshow(img)
-    for poly in segments:
-        plt.fill(poly[:, 0], poly[:, 1], alpha=.3, facecolor='g', edgecolor='black', linewidth=5)
+def place_img_on_img(bg, fg, offset):
+    w, h = fg.shape[:2]
+    bg[offset[0]:offset[0]+w, offset[1]:offset[1]+h] = fg
+    return bg
 
-    plt.axis('off')
-    plt.show()
+def crop_cell(img, poly, b=0):
+    im = Image.fromarray(img)
+    left = max(min(poly[:,0])-b, 0)
+    right = min(max(poly[:,0])+b, img.shape[0])
+    top = max(min(poly[:,1])-b, 0)
+    bottom = min(max(poly[:,1])+b, img.shape[1])
+    im = im.crop((left, top, right, bottom))
+    return np.array(im)
+
+def image_on_image_alpha(bg, fg, fg_mask, offset):
+    mask = np.zeros(bg.shape[:2], dtype=np.uint8)
+    mask = place_img_on_img(mask, fg_mask, offset)
+    cell_img = place_img_on_img(bg.copy(), fg, offset)
+
+    alpha = mask.astype(float)/255
+    alpha = np.repeat(alpha[:, :, np.newaxis], 3, axis=2)
+
+    fg = cv2.multiply(alpha, cell_img.astype(float))
+    bg = cv2.multiply(1.0 - alpha, bg.astype(float))
+
+    return cv2.add(fg, bg).astype(np.uint8)
+
+def add_cell(img, cell_img, cell_poly, offset, b=0):
+    cropped_cell = crop_cell(cell_img, cell_poly, b=b)
+    cell_mask = generate_mask(cell_img, cell_poly)
+    cropped_cell_mask = crop_cell(cell_mask, cell_poly, b=b)
+    mask = soften_mask(cropped_cell_mask)
+    return image_on_image_alpha(img, cropped_cell, mask, offset)
+
+def soften_mask(mask, amount=5):
+    kernel = np.ones((5,5), np.uint8) 
+    mask_dilation = cv2.dilate(mask, kernel, iterations=amount)
+    blur = cv2.GaussianBlur(mask_dilation,(21,21),0)
+    return cv2.max(mask, blur)
+
+def image_center(image):
+    (h, w) = image.shape[:2]
+    return (w // 2, h // 2)
+
+def rotate_bound(image, angle):
+    # grab the dimensions of the image and then determine the
+    # center
+    (h, w) = image.shape[:2]
+    (cX, cY) = (w // 2, h // 2)
+ 
+    # grab the rotation matrix (applying the negative of the
+    # angle to rotate clockwise), then grab the sine and cosine
+    # (i.e., the rotation components of the matrix)
+    M = cv2.getRotationMatrix2D((cX, cY), -angle, 1.0)
+    cos = np.abs(M[0, 0])
+    sin = np.abs(M[0, 1])
+ 
+    # compute the new bounding dimensions of the image
+    nW = int((h * sin) + (w * cos))
+    nH = int((h * cos) + (w * sin))
+ 
+    # adjust the rotation matrix to take into account translation
+    M[0, 2] += (nW / 2) - cX
+    M[1, 2] += (nH / 2) - cY
+ 
+    # perform the actual rotation and return the image
+    return cv2.warpAffine(image, M, (nW, nH))
+
 
 def get_min_and_max_images(img_list):
     g_min, g_max = np.inf, 0

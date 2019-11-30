@@ -100,4 +100,4 @@ def process_sipkamed(out_dir, width, height):
 
 
 if __name__ == '__main__':
-    process_sipkamed(join(BASE_DATA_DIR, 'SIPaKMeD', "processed_data"), 512, 512)
+    process_sipkamed(join(BASE_DATA_DIR, 'SIPaKMeD', "processed_data"), 1024, 1024)
