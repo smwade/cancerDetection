@@ -68,7 +68,10 @@ def image_center(image):
     (h, w) = image.shape[:2]
     return (w // 2, h // 2)
 
-def rotate_bound(image, angle):
+def rotate(image, angle):
+    """
+    rotates an image by angle, increases the dimension as necessary
+    """
     # grab the dimensions of the image and then determine the
     # center
     (h, w) = image.shape[:2]
@@ -91,7 +94,6 @@ def rotate_bound(image, angle):
  
     # perform the actual rotation and return the image
     return cv2.warpAffine(image, M, (nW, nH))
-
 
 def get_min_and_max_images(img_list):
     g_min, g_max = np.inf, 0

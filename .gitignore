@@ -4,8 +4,11 @@
 **/data
 **/.vscode
 **/.DS_Store
+**/*.egg-info
 
-others/
+.env
+
+**/others_models/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

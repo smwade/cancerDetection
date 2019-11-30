@@ -7,12 +7,12 @@ import numpy as np
 from collections import defaultdict
 
 from cancer.utils import read_dat_file, read_bmp
-from cancer.variables import BASE_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
+from cancer.variables import CANCER_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
 
 
 def get_smear(paths=True, flat=False):
     data = {}
-    DATA_DIR = join(BASE_DATA_DIR, 'SMEAR2005', 'pictures')
+    DATA_DIR = join(CANCER_DATA_DIR, 'SMEAR2005', 'pictures')
     for folder in os.listdir(DATA_DIR):
         if folder == '.DS_Store':
             continue
@@ -47,7 +47,7 @@ def get_smear(paths=True, flat=False):
 def get_sipakmed(cache=True):
     # Read the SIPaKMeD dataset
     if cache:
-        with open(join(BASE_DATA_DIR, 'SIPaKMeD', 'sipakmed.pkl'), 'rb') as f:
+        with open(join(CANCER_DATA_DIR, 'SIPaKMeD', 'sipakmed.pkl'), 'rb') as f:
             return pickle.load(f)
     dataset = {}
     cell_types = [
@@ -59,7 +59,7 @@ def get_sipakmed(cache=True):
     ]
 
     for cell_name in cell_types:
-        DATA_DIR = join(BASE_DATA_DIR, 'SIPaKMeD', cell_name)
+        DATA_DIR = join(CANCER_DATA_DIR, 'SIPaKMeD', cell_name)
         imgs = []
         cytos = []
         nucli = []
@@ -95,7 +95,7 @@ def get_sipakmed(cache=True):
             'cytos': cytos,
             'nucli': nucli
         }
-        with open(join(BASE_DATA_DIR, 'SIPaKMeD', 'sipakmed.pkl'), 'wb') as f:
+        with open(join(CANCER_DATA_DIR, 'SIPaKMeD', 'sipakmed.pkl'), 'wb') as f:
             pickle.dump(dataset, f)
 
     return dataset

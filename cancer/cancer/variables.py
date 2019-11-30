@@ -1,4 +1,7 @@
-BASE_DATA_DIR = '/Users/seanwade/projects/cancerDetection/data'
+import os
+
+CANCER_DATA_DIR = os.environ.get('CANCER_DATA_PATH')
+CANCER_WORKDIR = os.environ.get('CANCER_WORDIR')
 
 ABNORMAL_CELL_TYPES_SMEAR = [
     'severe_dysplastic',
