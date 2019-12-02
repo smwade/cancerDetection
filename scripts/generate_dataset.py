@@ -102,6 +102,10 @@ def process_sipkamed(out_dir, width, height):
 def process_unet(out_dir, width, height, grey=False, cell_segmentor=False):
     data = get_sipakmed(cache=True)
 
+    if grey:
+        out_dir = join(out_dir, 'grey')
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
     if not os.path.exists(join(out_dir, 'npydata')):
         os.makedirs(join(out_dir, 'npydata'))
     if not os.path.exists(join(out_dir, 'train')):
@@ -186,4 +190,4 @@ def unison_shuffled_copies(a, b):
 
 
 if __name__ == '__main__':
-    process_unet(join(CANCER_DATA_DIR, 'SIPaKMeD', "processed_data"), 1024, 1024)
+    process_unet(join(CANCER_DATA_DIR, 'SIPaKMeD', "processed_data"), 1024, 1024, grey=True)
