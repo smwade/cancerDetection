@@ -111,3 +111,13 @@ def pad_and_center(img, shape):
     w_offset = (shape[1] // 2) - (img.shape[1] // 2)
     arr[h_offset:img.shape[0]+h_offset, w_offset:img.shape[1]+w_offset] = img
     return arr
+
+def convert_tiff(path, out_dir):
+    from PIL import Image, ImageSequence
+    import numpy as np
+
+    im = Image.open(path)
+    slices = [np.array(i) for i in ImageSequence.Iterator(im)]
+    for i, s in enumerate(slices):
+        img = Image.fromarray(s)
+        img.save(os.path.join(out_dir, f'out-{i}.png'))

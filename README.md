@@ -15,12 +15,15 @@ datasets as well.
 
 ###  SMEAR
 
-The SMEAR dataset is 917 indavidual cells. They are segmented by nucleus and cytoplasm
+The SMEAR dataset is 917 indavidual cells. They are segmented by nucleus and cytoplasm.
+
 <https://mde-lab.aegean.gr/downloads>
 
 ### SPIaKMeD
 
 The SIPaKMeD Database consists of 4049 images of isolated cells that have been manually cropped from 966 cluster cell images of Pap smear slides. These images were acquired through a CCD camera adapted to an optical microscope. The cell images are divided into five categories containing normal, abnormal and benign cells.
+
+<http://cs.uoi.gr/~marina/sipakmed.html>
 
 ## Install
 

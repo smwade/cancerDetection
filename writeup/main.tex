@@ -148,7 +148,7 @@
 % Because I use these things in more than one place, I created new commands for
 % them.  I did not use \providecommand because I absolutely want LaTeX to error
 % out if these already exist.
-\newcommand{\Title}{Cervical Cancer}
+\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data and CNNs}
 \newcommand{\Author}{Sean Wade}
 \newcommand{\GraduationMonth}{December}
 \newcommand{\GraduationYear}{2019}
@@ -184,23 +184,20 @@
 \yearcopyrighted{\GraduationYear}
 
 \documentabstract{%
-  Cervical cancer is one of the deadliest cancers amound women worldwide. Manual screening is relativly strait forward, however it is ime-consuming and expensive. The goal of this project is to help develop
-  a low cost sensor and algorithm to detect this cancer.
+  Cervical cancer is one of the deadliest cancers amoung women worldwide. There are approxiamtly
+  270,000 deaths a year, out of which 85\% occure in developing countries. The goal of this project
+  is to help in the development of low cost sensors and new algorithms to detect cervical cancer in
+  India. Early diagnosis of this cancer is extreamly effective in treatment.
 
-  /section{thesis statment}
-
-  Recent advances in neural networks can be applied to the early detection of cervical cancer. This makes use of CNNS and synthetic data
-
-
+  Recent advances in neural networks can be applied to the early detection of cervical cancer.
+  The primary bottleneck is the lack of labeled data and cost of generating it. This project
+  will focus on new ways of generating this data and using it in state of the art computer 
+  vision algorithms.
 }
 
 \documentkeywords{%
     segmentation, CNN, synthetic data, data augmentation, cervical cancer, mediacl imaging
 }
-
-%\acknowledgments{%
-    %Thanks go to the ECEn style file authors for providing both a reasonable initial style and the motivation to abandon it.
-%}
 
 \department{Computer~Science}
 \graduatecoordinator{Michael~Jones}
@@ -225,13 +222,12 @@
 % \begin{sloppy} ... \end{sloppy}. If that does not work, try
 % \microtypesetup{protrusion=false} ... \microtypesetup{protrusion=true}
 \usepackage{microtype}
-
-% seans additions
+\usepackage{float}
+\usepackage{subcaption} % loads the caption package
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 
 \usepackage{siunitx}
-
 
 
 \begin{document}
@@ -244,7 +240,7 @@
 \chapter{Introduction}
 
 Cervical cancer accounts for 6.6\% of cancer cases in the world. In 2018 alone, there were well
-over 570,000 cases. Even worse is the disproportionate way populations are effected. About 90\%
+over 570,000 cases. Even worse is the disproportionate way populations are affected. About 85\%
 of deaths from cervical cancer came from lot to middle income countries.\cite{15}
 
 
@@ -253,32 +249,55 @@ treatment.
 
 \section{The pap-smear screening}
 
-The pap-smear screening was developed by Georges Papanicolaou. The test is done by collecting cells and staining them. When they are looked at under a microscope cyto-technicians are able to detect pre-cancerous cells in the uterine
-cervix. Human lableing and classification of the indavidaul cells is very time consuming and expensive since it must be preformed by skilled cyto-technicians. The goal of this project is to not do that.
-
-Using a small brush, cotton-stick or wooden stick, a cytological sample is taken from the cervix and smeared onto a thin glass slide. 
-To clarify the cells characteristics the smear is stained using the Papanicolaou method, so the different components of the cells are em- phasized with specific colors - this makes it more clear in a microscope.\cite{herlev2}
-
-
-Each microscope slide contains up to 300,000 single cells with defferent orientations and overlap\cite{herlev2}
-
-\section{Cervix Stuff}
-
+The pap-smear screening was developed by Georges Papanicolaou. Using a small brush, a cytological sample is taken from the cervix and smeared onto a thin glass slide. 
+To clarify the cells characteristics, the smear is stained using the Papanicolaou method. This emphisizes the different components of the cells with specific colors, making it more clear in a microscope.\cite{herlev2}
+Each microscope slide contains up to 300,000 single cells with defferent orientations and overlap\cite{herlev2}. This has made automatic segmentation methods challenging.
 
 \chapter{Datasets}
 
 The datasets used are constructed by cyto-technicians for classification purposes. These technicians use a microsope witha resolution of  \SI{0.201}{\micro\metre} / pixel to grab every cell.
 
-
 \section{SIPaKMeD}
-The SIPaKMeD dataset consists of 4049 single cell images which have been manually cropped
-from 996 cluser cell images of Pap smear slides. These cells are then labeled in 5 categories: (1) Dyskera- totic, (2) Koilocytotic, (3) Metaplastic, (4) Parabasal and (5) Superficial-Intermediate. 1-2 classes represent the ab- normal cervical cells, 4-5 classes represent normal cervical cells, and 3 represents the benign cells.\cite{sipakmed}
+
+The SIPaKMeD dataset consists of 996 cluser cell images of Pap smear slides. From these there are
+4049 indavidual cells that are segmented. These cells are then labeled in 5 categories: 
+(a) Dyskeratotic, (b) Koilocytotic, (c) Metaplastic, (d) Parabasal and (e) Superficial-Intermediate.
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox{Dysketarotic}{\includegraphics[width=0.30\textwidth]{cells/dysketarotic_059}} \quad
+  \subcaptionbox{Koilocytotic}{\includegraphics[width=0.30\textwidth]{cells/koilocytotic_110}} \quad
+  \subcaptionbox{Metaplastic}{\includegraphics[width=0.30\textwidth]{cells/metaplastic_001}}%
+  \hfill
+  \subcaptionbox{Parabasal}{\includegraphics[width=0.30\textwidth]{cells/parabasal_020}} \quad
+  \subcaptionbox{Superficial-Intermediate}{\includegraphics[width=0.30\textwidth]{cells/superficial_intermediate_007}} 
+  \caption{Cell Types}
+\end{figure}
+
+\noindent \textbf{Superficial-Intermediate cells} constitute the majority of the cells found in a Pap test. Usually they are flat with round, oval or polygonal shape cytoplasm stains mostly eosinophilic or cyanophilic. They contain a central pycnotic nucleus. They have well defined, large polygonal cytoplasm and easily recognized nuclear limits (small pycnotic in the superficial and vesicular nuclei in intermediate cells). These type of cells show the characteristics morphological changes (koilocytic atypia) due to more severe lessions.
+\\ \textbf{Parabasal cells} are immature squamous cells and they are the smallest epithelial cells seen on a typical vaginal smear. The cytoplasm is generally cyanophilic and they usually contain a large vesicular nucleus. It must be noted that parabasal cells have similar morphological characteristic with the cells identified as metaplastic cells and it is difficult to be distinguished from them.    
+\\ \textbf{Koilocytotic cells} correspond most commonly in mature squamous cells (intermediate and superficial) and some times in metaplastic type koilocytotic cells. They appear most often cyanophilic, very lightly stained and they are characterized by a large perinuclear cavity. The periphery of the cytoplasm is very dense stained. The nuclei of koilocytes are usually enlarged, eccentrically located, hyperchromatic and exhibit irregularity of the nuclear membrane contour. 
+\\ \textbf{Dysketarotic cells} are squamous cells which undergone premature abnormal keratinization within individual cells or more often in three-dimensional clusters. They exhibit a brilliant orangeophilic cytoplasm. They are characterized by the presence of vesicular nuclei, identical to the nuclei of koilcytotic cells. In many cases there are binucleated and/or multinucleated cells.
+\\ \textbf{Metaplastic Cells} are small or large parabasal-type cells with prominent cellular borders, often exhibiting eccentric nuclei and sometimes containing a large intracellular vacuole. The staining in the center portion is usually light brown and it often differs from that in the marginal portion. Also, there is essentially a darker-stained cytoplasm and they exhibit great uniformity of size and shape compared to the parabasal cells, as their characteristic is the well defined, almost round shape of cytoplasm.\cite{sipakmed}
 
 \section{Herlev}
-The Herlev dataset is comprised of 917 isolated single cell images. These are distributed unequally between seven classes of cells.  (1) Superficial squamous epithelia, (2) Intermediate squamous epithelia, (3) Colum- nar epithelial, (4) Mild squamous non-keratinizing dyspla- sia, (5) Moderate squamous non-keratinizing dysplasia, (6) Severe squamous non-keratinizing dysplasia and (7) Squa-
-mous cell carcinoma in situ intermediate. The classes 1-3 are normal cervical cells whereas classes 4-7 are abnormal cervical cells.\cite{herlev}
+The Herlev dataset is comprised of 917 isolated single cell images. These are distributed unequally between seven classes of cells.  Superficial squamous epithelia, intermediate squamous epithelia, columnar epithelial, mild squamous non-keratinizing dysplasia, moderate squamous non-keratinizing dysplasia, severe squamous non-keratinizing dysplasia and squamous cell carcinoma in situ intermediate.\cite{herlev}
 
-\includegraphics[width=8cm]{test}
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{Light Dysplastic}{\includegraphics[width=.21\textwidth]{cells/herlev/light_dysplastic}} \quad
+  \subcaptionbox*{Moderate Dysplastic}{\includegraphics[width=.21\textwidth]{cells/herlev/moderate_dysplastic}} \quad
+  \subcaptionbox*{Severe Dysplastic}{\includegraphics[width=.21\textwidth]{cells/herlev/severe_dyplastic}} \quad
+  \subcaptionbox*{Carcinoma in Situ}{\includegraphics[width=.21\textwidth]{cells/herlev/carcinoma_in_situ}}
+  \caption{Abnormal Cells}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{Intermediate}{\includegraphics[width=.21\textwidth]{cells/herlev/normal_intermediate}} \quad
+  \subcaptionbox*{Superficiel}{\includegraphics[width=.21\textwidth]{cells/herlev/normal_superficiel}} \quad
+  \subcaptionbox*{Columnar}{\includegraphics[width=.21\textwidth]{cells/herlev/normal_columnar}}
+  \caption{Normal Cells}
+\end{figure}
 
 
 \chapter{Background}
@@ -287,7 +306,7 @@ Current automatic screening scystems that incorperate pap smear have a very simi
 
 Whole slide classification (no segmentation) \cite{kiran}
 
-\chapter{Data Generation}
+\chapter{Synthetic Data Generation}
 
 \begin{itemize}
   \item rotations
@@ -296,13 +315,14 @@ Whole slide classification (no segmentation) \cite{kiran}
 \end{itemize}
 
 
+\chapter{Segmentation Model}
 \chapter{Experiments and Reuslts}
 
 \chapter{Future Work}
 
 \chapter{Tools and skills learned}
 
-\chapter{Project Requirments}
+\chapter*{Project Requirments}
 
 \section{Project Initiation}
 The student finds a mentor who agrees to work with him/her on a project not later than the end of his/her 3rd semester in the program. The project may be initiated by the student or the mentor. 
@@ -342,5 +362,4 @@ The final CS 698R grade will be determined by the Advisor
 
 \bibliographystyle{plainnat}
 \bibliography{bib}
-
 \end{document}

@@ -1,6 +1,6 @@
 import os
 
-CANCER_DATA_DIR = os.environ.get('CANCER_DATA_PATH')
+CANCER_DATA_DIR = os.environ.get('CANCER_DATA_DIR')
 CANCER_WORKDIR = os.environ.get('CANCER_WORDIR')
 
 ABNORMAL_CELL_TYPES_SMEAR = [
