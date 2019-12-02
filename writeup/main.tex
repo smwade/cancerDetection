@@ -308,11 +308,59 @@ Whole slide classification (no segmentation) \cite{kiran}
 
 \chapter{Synthetic Data Generation}
 
-\begin{itemize}
-  \item rotations
-  \item flip horizontal and vertical
-  \item random crop and zoom
-\end{itemize}
+There are lots of different augmentations I do to the images...
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/example_cell}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/flip_aug1}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/flip_aug2}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/flip_aug3}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/flip_aug4}} 
+  \caption{Horizantal and vertical flipping}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/example_cell}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/elastic_deformation_aug1}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/elastic_deformation_aug2}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/elastic_deformation_aug3}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/elastic_deformation_aug4}} 
+  \caption{Elastic Deformation}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/example_cell}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/random_crop_aug1}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/random_crop_aug2}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/random_crop_aug3}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/random_crop_aug4}} 
+  \caption{Croppin}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/example_cell}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/rotate_aug1}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/rotate_aug2}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/rotate_aug3}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/rotate_aug4}} 
+  \caption{Rotation}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/example_cell}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/zoom_aug1}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/zoom_aug2}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/zoom_aug3}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{augment/zoom_aug4}} 
+  \caption{Zoom}
+\end{figure}
+
+
 
 
 \chapter{Segmentation Model}
