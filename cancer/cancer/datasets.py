@@ -6,11 +6,42 @@ from glob import glob
 import numpy as np
 from collections import defaultdict
 
-from cancer.utils import read_dat_file, read_bmp
+from cancer.utils import read_dat_file, read_png
 from cancer.variables import CANCER_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
 
 
-def get_smear(paths=True, flat=False):
+def get_cell_type_dataset(use_cached=True):
+    """
+    returns data as 2 arrays.
+    images: [n,256,256,3]
+    lables: [n, 5]
+    """
+    data_dir = join(CANCER_DATA_DIR, 'SIPaKMeD', 'processed_data', 'cells', 'large')
+    if use_cached:
+        with open(join(data_dir, 'data.pkl'), 'rb') as f:
+            return pickle.load(f)
+    cell_types = [
+        'metaplastic',
+        'dyskeratotic',
+        'superficial-Intermediate',
+        'parabasal',
+        'koilocytotic'
+    ]
+    images, labels = [], []
+    for i, cell_name in enumerate(cell_types):
+        for img_path in os.listdir(join(data_dir, cell_name)):
+            img = read_png(join(data_dir, cell_name, img_path))
+            label = np.zeros(5)
+            label[i] = 1
+            images.append(img)
+            labels.append(label)
+    images, labels = np.array(images).squeeze(), np.array(labels).squeeze()
+    with open(join(data_dir, 'data.pkl'), 'wb') as f:
+        pickle.dump((images, labels), f)
+    return images, labels
+
+
+def get_smear_dataset(paths=True, flat=False):
     data = {}
     DATA_DIR = join(CANCER_DATA_DIR, 'SMEAR2005', 'pictures')
     for folder in os.listdir(DATA_DIR):
@@ -99,4 +130,3 @@ def get_sipakmed(cache=True):
             pickle.dump(dataset, f)
 
     return dataset
-

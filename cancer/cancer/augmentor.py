@@ -16,7 +16,8 @@ class AddCell(Operation):
 
 def get_data_generator(image_path, mask_path, batch_size=1):
     pipeline = Augmentor.Pipeline(image_path)
-    pipeline.ground_truth(mask_path)
+    if mask_path is not None:
+        pipeline.ground_truth(mask_path)
 
     pipeline.rotate(probability=0.5, max_left_rotation=25, max_right_rotation=25)
     pipeline.flip_left_right(probability=0.5)
@@ -25,14 +26,9 @@ def get_data_generator(image_path, mask_path, batch_size=1):
     pipeline.random_distortion(probability=.3, grid_width=8, grid_height=8, magnitude=5)
     pipeline.crop_random(.05, .85)
     
-    gen = pipeline.keras_generator(batch_size=batch_size, scaled=False)
+    gen = pipeline.keras_generator(batch_size=batch_size)
 
-    def data_generator():
-        while True:
-            data = next(gen)
-            yield data
-
-    return data_generator(), gen
+    return gen
 
 
 if __name__ == '__main__':

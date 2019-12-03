@@ -12,13 +12,16 @@ from matplotlib import pyplot as plt
 def read_bmp(img_path):
     return cv2.imread(img_path)
 
+def read_png(img_path):
+    return cv2.imread(img_path)
+
 def read_dat_file(path):
     return np.loadtxt(path, delimiter=',')
 
 def convert_array_to_poly(arr):
     return arr.flatten().tolist()
 
-def generate_mask(img, poly):
+def generate_mask_from_poly(img, poly):
     w, h, _= img.shape
     mask = Image.new('L', (w, h), 0)
     ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=1, fill='#ffffff')
@@ -53,7 +56,7 @@ def image_on_image_alpha(bg, fg, fg_mask, offset):
 
 def add_cell(img, cell_img, cell_poly, offset, b=0):
     cropped_cell = crop_cell(cell_img, cell_poly, b=b)
-    cell_mask = generate_mask(cell_img, cell_poly)
+    cell_mask = generate_mask_from_poly(cell_img, cell_poly)
     cropped_cell_mask = crop_cell(cell_mask, cell_poly, b=b)
     mask = soften_mask(cropped_cell_mask)
     return image_on_image_alpha(img, cropped_cell, mask, offset)
@@ -123,4 +126,10 @@ def convert_tiff(path, out_dir):
         img.save(os.path.join(out_dir, f'out-{i}.png'))
 
 def create_mask(cyto_poly, nuc_poly, w, h):
-    pass
+    """Create a color mask for pix2pix"""
+    raise NotImplementedError
+
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
