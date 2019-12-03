@@ -121,3 +121,6 @@ def convert_tiff(path, out_dir):
     for i, s in enumerate(slices):
         img = Image.fromarray(s)
         img.save(os.path.join(out_dir, f'out-{i}.png'))
+
+def create_mask(cyto_poly, nuc_poly, w, h):
+    pass

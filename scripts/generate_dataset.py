@@ -1,7 +1,11 @@
 import os
 from os.path import join
 import cv2
+from glob import glob
+import pathlib
 import numpy as np
+from PIL import Image
+from tqdm import tqdm
 
 from cancer.datasets import get_sipakmed
 from cancer.variables import ABNORMAL_CELL_TYPES_SIP, NORMAL_CELL_TYPES_SIP, CANCER_DATA_DIR
@@ -97,7 +101,7 @@ def process_sipkamed(out_dir, width, height):
 
         np.save(join(out_dir, 'images_arr.npy'), images)
         np.save(join(out_dir, 'masks_arr.npy'), masks)
-        
+
 
 def process_unet(out_dir, width, height, grey=False, cell_segmentor=False):
     data = get_sipakmed(cache=True)
@@ -188,6 +192,38 @@ def unison_shuffled_copies(a, b):
     p = np.random.permutation(len(a))
     return a[p], b[p]
 
+def process_cell_gan(out_dir):
+    """
+    Adds indavidual cells to their own folder
+    """
+    cell_types = [
+        'im_Metaplastic',
+        'im_Dyskeratotic',
+        'im_Superficial-Intermediate',
+        'im_Parabasal',
+        'im_Koilocytotic'
+    ]
+    for cell_name in cell_types:
+        data_dir = join(CANCER_DATA_DIR, 'SIPaKMeD', cell_name, 'CROPPED', '*.bmp')
+        cell_name = cell_name.replace('im_','').lower()
+        pathlib.Path(join(out_dir, cell_name)).mkdir(parents=True, exist_ok=True)
+        for i, img_path in tqdm(enumerate(glob(data_dir))):
+            img = Image.open(img_path)
+            img.save(join(out_dir, cell_name, f"{i}.png",), 'PNG')
+
+def resize_images(in_dir, out_dir, h, w):
+    pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
+    for subdir, dirs, files in os.walk(in_dir):
+        for file in files:
+            if file == '.DS_Store':
+                continue
+            im = Image.open(join(subdir, file))
+            imResize = im.resize((h, w), Image.ANTIALIAS)
+            cell_type = os.path.basename(subdir)
+            pathlib.Path(join(out_dir, cell_type)).mkdir(parents=True, exist_ok=True)
+            imResize.save(join(out_dir, cell_type, file), 'PNG')
 
 if __name__ == '__main__':
-    process_unet(join(CANCER_DATA_DIR, 'SIPaKMeD', "processed_data"), 1024, 1024, grey=True)
+    # process_unet(join(CANCER_DATA_DIR, 'SIPaKMeD', "processed_data"), 1024, 1024, grey=True)
+    # process_cell_gan('/Users/seanwade/Desktop/cells')
+    resize_images('/Users/seanwade/Desktop/cells', '/Users/seanwade/Desktop/cells/processed_large', 256, 256)
