@@ -44,8 +44,8 @@ def make_pix2pix_format(img, mask):
 
     h, w = 256, 512
     new_img = np.zeros((h, w, 3), np.uint8)
-    new_img[:,0:w//2] = mask
-    new_img[:,w//2:] = img
+    new_img[:,0:w//2] = img
+    new_img[:,w//2:] = mask
  
     return new_img
 
