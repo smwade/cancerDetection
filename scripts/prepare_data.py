@@ -20,7 +20,7 @@ def create_dirs(base_path, dir_list):
 
 def prepare_full_slide_sip(width=1024, height=1024):
     out_dir = join(CANCER_DATA_DIR, 'SIPaKMeD', 'processed_data', 'full_slide_classification')
-    create_dirs(out_dir, ['normal/images', 'abnormal/images', 'normal/masks', 'abnormal/masks', 'npydata'])
+    create_dirs(out_dir, ['normal/images', 'abnormal/images', 'normal/masks', 'abnormal/masks', 'npydata', 'classes'])
 
     data = get_sipakmed(cache=False)
     image_list = []
@@ -28,6 +28,7 @@ def prepare_full_slide_sip(width=1024, height=1024):
 
     for cell_type in NORMAL_CELL_TYPES_SIP:
         d = data[cell_type]
+        create_dirs(out_dir, ['classes/'+cell_type])
         for img_path, cyto_polys in zip(d['imgs'], d['cytos']):
             img = read_bmp(img_path)
             mask = np.zeros(img.shape[:2],dtype=np.uint8)
@@ -45,11 +46,14 @@ def prepare_full_slide_sip(width=1024, height=1024):
             
             cv2.imwrite(join(out_dir, 'normal', 'images', img_name), img)
             cv2.imwrite(join(out_dir, 'normal', 'masks', mask_name), mask)
+            cv2.imwrite(join(out_dir, 'classes', cell_type, img_name), img)
+
             image_list.append(img)
             mask_list.append(mask)
 
     for cell_type in ABNORMAL_CELL_TYPES_SIP:
         d = data[cell_type]
+        create_dirs(out_dir, ['classes/'+cell_type])
         for img_path, cyto_polys in zip(d['imgs'], d['cytos']):
             img = read_bmp(img_path)
             mask = np.zeros(img.shape[:2],dtype=np.uint8)
@@ -68,6 +72,7 @@ def prepare_full_slide_sip(width=1024, height=1024):
             
             cv2.imwrite(join(out_dir, 'abnormal', 'images', img_name), img)
             cv2.imwrite(join(out_dir, 'abnormal', 'masks', mask_name), mask)
+            cv2.imwrite(join(out_dir, 'classes', cell_type, img_name), img)
 
             image_list.append(img)
             mask_list.append(mask)
@@ -107,7 +112,7 @@ def prepare_indavidual_cell_sip():
         create_dirs(out_dir, [cell_name])
         for i, img_path in tqdm(enumerate(glob(data_dir))):
             img = Image.open(img_path)
-            img = img.resize((160,300),Image.ANTIALIAS)
+            img = img.resize((256,256),Image.ANTIALIAS)
             img.save(join(out_dir, cell_name, f"{i}.png",), 'PNG')
 
 

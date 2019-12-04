@@ -54,10 +54,12 @@ def image_on_image_alpha(bg, fg, fg_mask, offset):
 
     return cv2.add(fg, bg).astype(np.uint8)
 
-def add_cell(img, cell_img, cell_poly, offset, b=0):
+def add_cell(img, cell_img, cell_poly, offset, angle, b):
     cropped_cell = crop_cell(cell_img, cell_poly, b=b)
     cell_mask = generate_mask_from_poly(cell_img, cell_poly)
     cropped_cell_mask = crop_cell(cell_mask, cell_poly, b=b)
+    cropped_cell = rotate(cropped_cell, angle)
+    cropped_cell_mask = rotate(cropped_cell_mask, angle)
     mask = soften_mask(cropped_cell_mask)
     return image_on_image_alpha(img, cropped_cell, mask, offset)
 
