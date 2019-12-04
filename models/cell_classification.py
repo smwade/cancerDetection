@@ -9,17 +9,17 @@ import numpy as np
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-from cancer.variables import SIPAKMED_DATA_DIR
+from cancer.variables import CANCER_DATA_DIR
 from cancer.augmentor import get_data_generator
 
 
 BATCH_SIZE = 32
-EPOCHS = 15
+EPOCHS = 80
 IMG_HEIGHT = 256
 IMG_WIDTH = 256
 VAL_SPLIT = .2
 
-data_path = os.path.join(SIPAKMED_DATA_DIR, 'indavidual_cells')
+data_path = os.path.join(CANCER_DATA_DIR, 'SIPaKMeD', 'processed_data', 'indavidual_cells')
 
 # data generation
 train_datagen = ImageDataGenerator(
@@ -44,7 +44,7 @@ validation_generator = train_datagen.flow_from_directory(
     subset='validation')
 
 
-logdir = "/tmp/sean/simple/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+logdir = "/home/seanwade/sean/cancerDetection/logs/classif/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
 
 # Define model
