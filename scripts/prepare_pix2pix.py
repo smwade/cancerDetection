@@ -12,7 +12,11 @@ from cancer.utils import read_bmp, read_dat_file
 from cancer.visulize import show_image
 from cancer.utils import convert_array_to_poly
 from PIL import ImageDraw
+import glob
 
+
+def listdir_nohidden(path):
+    return glob.glob(os.path.join(path, '*'))
 
 def create_dirs(base_path, dir_list=[]):
     pathlib.Path(base_path).mkdir(parents=True, exist_ok=True)
@@ -53,9 +57,13 @@ def make_pix2pix_format(img, mask):
 count = 1
 for cell_name in cell_types:
     cropped_path = join(CANCER_DATA_DIR, 'SIPaKMeD', cell_name, 'CROPPED')
-    file_list = sorted(os.listdir(cropped_path))
+    file_list = sorted(listdir_nohidden(cropped_path))
     for i in range(len(file_list)//3):
         img, cyto, nuc = file_list[(i*3)], file_list[(i*3)+1], file_list[(i*3)+2]
+        print(img)
+        print(cyto)
+        print(nuc)
+        print()
         img = read_bmp(join(cropped_path, img))
         cyto = read_dat_file(join(cropped_path, cyto))
         nuc = read_dat_file(join(cropped_path, nuc))
