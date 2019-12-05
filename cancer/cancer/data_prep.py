@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 
 def make_pix2pix_format(target_image, input_image, size=256):    
