@@ -148,7 +148,7 @@
 % Because I use these things in more than one place, I created new commands for
 % them.  I did not use \providecommand because I absolutely want LaTeX to error
 % out if these already exist.
-\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data and CNNs}
+\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data and CNNs (TODO: new title?)}
 \newcommand{\Author}{Sean Wade}
 \newcommand{\GraduationMonth}{December}
 \newcommand{\GraduationYear}{2019}
@@ -160,7 +160,7 @@
     pdfauthor=\Author,%
     pdfsubject={PhD Dissertation, BYU CS Department: %
                 Degree Granted \GraduationMonth~\GraduationYear, Document Created \today},%
-    pdfkeywords={BYU, thesis, dissertation, LaTeX},%
+    pdfkeywords={segmentation, CNN, synthetic data, data augmentation, cervical cancer, mediacl imaging}%
 }
 
 % Rewrite the itemize, description, and enumerate environments to have more
@@ -178,20 +178,22 @@
 \author{\Author}
 
 \committeechair{David~Wingate}
-\committeemembera{TODO}
-\committeememberb{TODO}
+\committeemembera{Michael~Jones}
+\committeememberb{Christopher~Archibald}
 
 \yearcopyrighted{\GraduationYear}
 
 \documentabstract{%
-  Cervical cancer is one of the deadliest cancers amoung women worldwide. There are approxiamtly
-  270,000 deaths a year, out of which 85\% occure in developing countries. The goal of this project
-  is to help in the development of low cost sensors and new algorithms to detect cervical cancer in
-  India. Early diagnosis of this cancer is extreamly effective in treatment.
+  Cervical cancer is one of the deadliest cancers amoung women worldwide. There were about 
+  270,000 deaths a year, out of which 85\% occured in developing countries. One of the
+  primary reasons of the inequality is the cost and availability of cancer screenings for early diagnosis.
+  The goal of this project is to help in the development of low cost sensors and new algorithms to detect 
+  cervical cancer for poor regions. Early diagnosis of this cancer is extreamly effective in treatment and 
+  has the potential to save many lives.
 
   Recent advances in neural networks can be applied to the early detection of cervical cancer.
   The primary bottleneck is the lack of labeled data and cost of generating it. This project
-  will focus on new ways of generating this data and using it in state of the art computer 
+  will focus on new ways of generating synthetic cell data and using it to augment state of the art computer 
   vision algorithms.
 }
 
@@ -224,6 +226,7 @@
 \usepackage{microtype}
 \usepackage{float}
 \usepackage{subcaption} % loads the caption package
+\usepackage{amsfonts}
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 
@@ -240,7 +243,7 @@
 \chapter{Introduction}
 
 Cervical cancer accounts for 6.6\% of cancer cases in the world. In 2018 alone, there were well
-over 570,000 cases. Even worse is the disproportionate way populations are affected. About 85\%
+over 570,000 cases. Even worse is the disproportionate way populations are effected. About 85\%
 of deaths from cervical cancer came from lot to middle income countries.\cite{15}
 
 
@@ -302,13 +305,17 @@ The Herlev dataset is comprised of 917 isolated single cell images. These are di
 
 \chapter{Background}
 
-Current automatic screening scystems that incorperate pap smear have a very similar workflow: cell segmentation, cytoplasm and nuclei segmentation, feature extraction, and cell classification.
+Current automatic screening scystems that incorperate pap smear have a very similar workflow: 
+cell segmentation, cytoplasm and nuclei segmentation, feature extraction, and cell classification.
+This is very limited and very sensitive to cell overlap.
 
 Whole slide classification (no segmentation) \cite{kiran}
 
 \chapter{Synthetic Data Generation}
 
-There are lots of different augmentations I do to the images...
+There are lots of different manaul augmentations I do to the images...
+
+\section{Tradidtional Data Augmentation}
 
 \begin{figure}[H]
   \centering
@@ -360,53 +367,75 @@ There are lots of different augmentations I do to the images...
   \caption{Zoom}
 \end{figure}
 
+\section{Inserting Cells}
 
+This is where I randomly crop and segment labeled cells in other images. I place them onto
+the image. To help it blend in more I take the hard segmentation boundy and dialate the mask.
+I then do a Guassian filter to blur the opacity so it is not just a hard border on the
+inserted images.
 
+current challanges:
+
+\begin{itemize}
+  \item different size cells from different samples
+  \item dosnt fit into the context when put randomly
+  \item there are different colors of die that are not consistant accross classes (color correct somehow?)
+  \item placing above other cells
+\end{itemize}
+
+\section{Conditional Generative Adversarial Networks}
+
+Generative adversarial networks, GANs, are generative models that learn a mapping from 
+a random noise vector $z$ to output image $y$, $G : z \rightarrow y$. A traditional GAN
+can be broken down into 2 networks, the generator and the discriminator. The generator is $G$ 
+described above. The goal of the discriminator is to take in a generated and real image and 
+classify which is real.
+
+Conditional GANs differ from this learning a mapping from an observed image, $x$, and a random noise vector $z$. This 
+gives $G: \{ x, z \} \rightarrow y$. Mathematically the objective funcitn of a conditional GAN can be expressed as
+
+$$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 - D(x, G(x, z))]$$
+
+\subsection{Pix2Pix}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.9\textwidth]{pix2pix}
+  \caption{Pix2Pix Archetecture \cite{pix2pix-image}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.7\textwidth]{91_2000}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.7\textwidth]{good_pix2pix}
+\end{figure}
 
 \chapter{Segmentation Model}
+
+\section{Convolutional Neural Network}
+
+\section{Unet Segmentaion}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.75\textwidth]{unet}
+  \caption{Unet Archetecture}
+\end{figure}
+
 \chapter{Experiments and Reuslts}
 
+\textbf{Cell 5 part classification: CNN}
+
+loss: 0.0116 \\
+acc: 0.9953 \\
+val loss 0.2423 \\
+val acc: 0.9513
+
 \chapter{Future Work}
-
-\chapter{Tools and skills learned}
-
-\chapter*{Project Requirments}
-
-\section{Project Initiation}
-The student finds a mentor who agrees to work with him/her on a project not later than the end of his/her 3rd semester in the program. The project may be initiated by the student or the mentor. 
- 
-
-\section{Project Development and Completion}
-
-When the student is ready to complete the project, the student signs up for CS 698R (add code should be obtained from the Graduate Academic Advisor). The student will be expected to put 125-150 hours of work into the project during that semester. CS 698R is a pass/fail class. It is expected that students will only take this class once. The proposal form must be completed, signed and turned into the Graduate Academic Advisor by the first day of classes in the semester/term you intend to take the course.
-
-The student prepares a short proposal and submits it to the graduate coordinator by the end of the first week of the semester.  The proposal focuses on specific activities and clearly-defined deliverables, approved by the mentor and then by the graduate coordinator.  The proposal should include a checklist of deliverables that will be demonstrated in the final presentation.
-The mentor and student meet at least weekly throughout the project so that the student has a meaningful mentoring experience. The mentor must approve all revisions to the project deliverables checklist.
-The student tracks hours worked on the project and keeps a week-by-week log of hours spent working on the project, split into categories such as design, coding, writing, etc. This 1) allows the mentor to make sure that expectations are met, 2) helps curb project creep, and 3) is common practice in industry (particularly if working for a company that handles multiple consulting/contracts/projects, where it is important to track to the fraction of an hour how long is spent on each).
-By the middle of the semester (by the end of the 9th week), the student produces a draft report, also focused on deliverables, a copy of which must be submitted to the Graduate Coordinator. An email will be sent to all faculty mentors and MS Project students by the end of 7th week of the semester as a reminder of this requirement. The student and mentor discuss the draft report, review the time log, go over the write-up, and make scope adjustments if needed. This contributes to the student having a meaningful and culminating writing experience.  Additional reviewing iterations are recommended, but optional.
-The student prepares a final written scientific project report, including at least an executive summary, an introduction, a project description, a validation section, and a conclusion.
-At the end of the semester, project presentations are held within a 3-hour block during finals week. Two members of the Graduate Committee, together with the mentor for each project, make up the student's committee. The Committee sits at a desk with all the project reports in a binder in order of student presentation. The students present for 15 minutes after which there are 5 minutes for questions and comments. The Committee reviews the time log, and checks off deliverables as the student presents. If all deliverables are satisfactory, the student passes. If not, the Committee may discuss and advise as to whether the student passes or fails.
-Project Report
-The MS project report document should be submitted to the committee at the end of the semester in which the student takes CS 698R. The document must be about 15 double-spaced pages. The project report should provide necessary background and then argue that a significant piece of work was needed. The contributions should reflect the importance of the work. A summary of the project's time log must also be included. 
-
-\section{Project Report Presentation }
-
-Oral Presentation Audience: CS faculty members who may not be acquainted with the topic.
-
-A 12-15 minute oral presentation of the project must be carefully organized and given to the members of the MS committee and the invited public. During the project report presentation, the student must answer committee member's questions on such areas as method, significance, organization, and literature search. After the presentation, the student and public leave the room while the committee comes to a decision on project report. 
- 
-
-Examination Results:
-
-At this point the examining committee decides on a result. The possible results are:
-
-Pass
-
-Pass with qualifications - Revision to project is an example of why this would be selected.
-
-Fail - Fail the oral exam and be terminated from the graduate program.
-
-The final CS 698R grade will be determined by the Advisor
 
 \bibliographystyle{plainnat}
 \bibliography{bib}

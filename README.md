@@ -40,3 +40,8 @@ pip install -r requirments.txt
 python -m ipykernel install --user --name=cancer
 ```
 
+```
+python prepare_data.py --input_dir ~/projects/cancerDetection/data/SIPaKMeD/ --out_dir ~/projects/cancerDetection/data/sipkamed_processed
+
+```
+

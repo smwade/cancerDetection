@@ -1,4 +1,5 @@
 import os
+import pathlib
 import cv2
 from os.path import join
 from collections import defaultdict
@@ -18,14 +19,24 @@ def read_png(img_path):
 def read_dat_file(path):
     return np.loadtxt(path, delimiter=',')
 
+def save_img(path, img):
+    cv2.imwrite(path, img)
+
 def convert_array_to_poly(arr):
     return arr.flatten().tolist()
+
+def create_dirs(base_path, dir_list=[]):
+    """create dirs under the base path"""
+    pathlib.Path(base_path).mkdir(parents=True, exist_ok=True)
+    for new_dir in dir_list:
+        pathlib.Path(os.path.join(base_path, new_dir)).mkdir(parents=True)
 
 def generate_mask_from_poly(img, poly):
     w, h, _= img.shape
     mask = Image.new('L', (w, h), 0)
     ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=1, fill='#ffffff')
     return np.array(mask)
+
 
 def place_img_on_img(bg, fg, offset):
     w, h = fg.shape[:2]
@@ -127,11 +138,26 @@ def convert_tiff(path, out_dir):
         img = Image.fromarray(s)
         img.save(os.path.join(out_dir, f'out-{i}.png'))
 
-def create_mask(cyto_poly, nuc_poly, w, h):
-    """Create a color mask for pix2pix"""
-    raise NotImplementedError
-
 def unison_shuffled_copies(a, b):
     assert len(a) == len(b)
     p = np.random.permutation(len(a))
     return a[p], b[p]
+
+def generate_cell_mask(img, cyto, nuc):
+    """ Generate a mask for a labelled cell """
+    w, h, _= img.shape
+    mask = Image.new(mode="RGB", size=(h,w))
+    ImageDraw.Draw(mask).polygon(convert_array_to_poly(cyto), outline=None, fill='#333333')
+    ImageDraw.Draw(mask).polygon(convert_array_to_poly(nuc), outline=None, fill='#AAAAAA')
+    return np.array(mask)
+
+def generate_full_mask(img, cytos, nucs):
+    """ Generates a mask for any number of cells on a slide """
+    h, w, _= img.shape
+    mask = Image.new(mode="RGB", size=(w,h))
+    for poly in cytos:
+        ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=None, fill='#333333')
+    for poly in nucs:
+        ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=None, fill='#AAAAAA')
+    return np.array(mask)
+

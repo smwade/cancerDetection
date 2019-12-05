@@ -6,7 +6,7 @@ from glob import glob
 import numpy as np
 from collections import defaultdict
 
-from cancer.utils import read_dat_file, read_png
+from cancer.utils import read_dat_file, read_png, read_bmp
 from cancer.variables import CANCER_DATA_DIR, NORMAL_CELL_TYPES_SMEAR, ABNORMAL_CELL_TYPES_SMEAR
 
 
@@ -16,7 +16,7 @@ def get_cell_type_dataset(use_cached=True):
     images: [n,256,256,3]
     lables: [n, 5]
     """
-    data_dir = join(CANCER_DATA_DIR, 'SIPaKMeD', 'processed_data', 'cells', 'large')
+    data_dir = join(CANCER_DATA_DIR, 'SIPaKMeD', 'processed_data', 'cwl', 'large')
     if use_cached:
         with open(join(data_dir, 'data.pkl'), 'rb') as f:
             return pickle.load(f)
