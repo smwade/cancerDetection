@@ -148,7 +148,7 @@
 % Because I use these things in more than one place, I created new commands for
 % them.  I did not use \providecommand because I absolutely want LaTeX to error
 % out if these already exist.
-\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data and CNNs (TODO: new title?)}
+\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data}
 \newcommand{\Author}{Sean Wade}
 \newcommand{\GraduationMonth}{December}
 \newcommand{\GraduationYear}{2019}
@@ -160,7 +160,7 @@
     pdfauthor=\Author,%
     pdfsubject={PhD Dissertation, BYU CS Department: %
                 Degree Granted \GraduationMonth~\GraduationYear, Document Created \today},%
-    pdfkeywords={segmentation, CNN, synthetic data, data augmentation, cervical cancer, mediacl imaging}%
+    pdfkeywords={synthetic data, data augmentation, cervical cancer, mediacl imaging}%
 }
 
 % Rewrite the itemize, description, and enumerate environments to have more
@@ -245,22 +245,30 @@
 Cervical cancer accounts for 6.6\% of cancer cases in the world. In 2018 alone, there were well
 over 570,000 cases. Even worse is the disproportionate way populations are effected. About 85\%
 of deaths from cervical cancer came from lot to middle income countries.\cite{15}
-
-
 Fortunatly the high mortality rate from cervical cancer can be reduced by effective screening and early
 treatment.
 
-\section{The pap-smear screening}
+\section{The Pap smear screening}
 
 The pap-smear screening was developed by Georges Papanicolaou. Using a small brush, a cytological sample is taken from the cervix and smeared onto a thin glass slide. 
 To clarify the cells characteristics, the smear is stained using the Papanicolaou method. This emphisizes the different components of the cells with specific colors, making it more clear in a microscope.\cite{herlev2}
 Each microscope slide contains up to 300,000 single cells with defferent orientations and overlap\cite{herlev2}. This has made automatic segmentation methods challenging.
 
+\section{Project Goals}
+
+The Goal of this project is to develop a data pipeline and tools to take in raw pap-smear slide data and output1
+\begin{itemize}
+  \item 
+\end{itemize}
+
 \chapter{Datasets}
 
-The datasets used are constructed by cyto-technicians for classification purposes. These technicians use a microsope witha resolution of  \SI{0.201}{\micro\metre} / pixel to grab every cell.
+Due to privacy with mediacl data and effort in labeling, there are only two open Pap smear datasets. For my project I use these two and make the pipeline generalizable
+to future datasets.
+
 
 \section{SIPaKMeD}
+The datasets used are constructed by cyto-technicians for classification purposes. These technicians use a microsope witha resolution of  \SI{0.201}{\micro\metre} / pixel to grab every cell.
 
 The SIPaKMeD dataset consists of 996 cluser cell images of Pap smear slides. From these there are
 4049 indavidual cells that are segmented. These cells are then labeled in 5 categories: 
@@ -302,8 +310,20 @@ The Herlev dataset is comprised of 917 isolated single cell images. These are di
   \caption{Normal Cells}
 \end{figure}
 
+\section{Extensibility to future datasets}
+
+Since we are developing a low cost sensor, all these tools I made will fit the new data into the pipline. This 
+is done by simply extending the DatasetConnector class to put the data in the correct format. More details are given
+in the attached API.
+
 
 \chapter{Background}
+
+\section{General Data Augmentation}
+
+Data hungry neural networks make us need data augmentation. Depending on the domain of the data, severl different types 
+of data augmentaion can be used. Very tradiional is fliping and rotating the data. Otheres include random color 
+altertions, adding noise, random zooming, ect.
 
 Current automatic screening scystems that incorperate pap smear have a very similar workflow: 
 cell segmentation, cytoplasm and nuclei segmentation, feature extraction, and cell classification.
@@ -406,12 +426,66 @@ $$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.7\textwidth]{91_2000}
-\end{figure}
 
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/1-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/1-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/1-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/1-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/1-inputs}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/1-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/1-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/1-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/1-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/1-outputs}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/1-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/1-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/1-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/1-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/1-targets}} 
+
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/2-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/2-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/2-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/2-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/2-inputs}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/2-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/2-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/2-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/2-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/2-outputs}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/2-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/2-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/2-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/2-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/2-targets}} 
+
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/3-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/3-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/3-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/3-inputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/3-inputs}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/3-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/3-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/3-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/3-outputs}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/3-outputs}} 
+
+\end{figure}
+\newpage
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.7\textwidth]{good_pix2pix}
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/3-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/3-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/3-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/3-targets}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/3-targets}} 
 \end{figure}
 
 \chapter{Segmentation Model}
