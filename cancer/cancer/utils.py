@@ -80,10 +80,6 @@ def soften_mask(mask, amount=5):
     blur = cv2.GaussianBlur(mask_dilation,(21,21),0)
     return cv2.max(mask, blur)
 
-def image_center(image):
-    (h, w) = image.shape[:2]
-    return (w // 2, h // 2)
-
 def rotate(image, angle):
     """
     rotates an image by angle, increases the dimension as necessary
@@ -92,6 +88,7 @@ def rotate(image, angle):
     # center
     (h, w) = image.shape[:2]
     (cX, cY) = (w // 2, h // 2)
+
  
     # grab the rotation matrix (applying the negative of the
     # angle to rotate clockwise), then grab the sine and cosine
