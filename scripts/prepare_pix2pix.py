@@ -16,7 +16,7 @@ from cancer.data_prep import make_pix2pix_format
 @click.option('-r', '--split_ratio', type=float, required=True)
 def prepare_pix2pix(image_dir, mask_dir, out_dir, split_ratio):
     images_list = os.listdir(image_dir)
-    create_dirs(out_dir, ['train', 'val', 'test'])
+    create_dirs(out_dir, ['train', 'val', 'test', 'all'])
     
     # calc split cutoffs
     train_cutoff = floor(split_ratio * len(images_list))
@@ -35,6 +35,7 @@ def prepare_pix2pix(image_dir, mask_dir, out_dir, split_ratio):
             cv2.imwrite(join(out_dir, 'val', f'{i}.jpg'), new_img)
         else:
             cv2.imwrite(join(out_dir, 'test', f'{i}.jpg'), new_img)
+        cv2.imwrite(join(out_dir, 'all', f'{i}.jpg'), new_img)
 
 if __name__ == '__main__':
     prepare_pix2pix()

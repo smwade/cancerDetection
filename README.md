@@ -28,20 +28,27 @@ The SIPaKMeD Database consists of 4049 images of isolated cells that have been m
 ## Install
 
 ```
-bash setup.py
-```
-
-For notebook
-
-```
-python -m venv venv
-source venv/bin/activate
-pip install -r requirments.txt
-python -m ipykernel install --user --name=cancer
-```
-
-```
 python prepare_data.py --input_dir ~/projects/cancerDetection/data/SIPaKMeD/ --out_dir ~/projects/cancerDetection/data/sipkamed_processed
 
 ```
 
+## Custom Dataset
+
+The data pipeline can work with other datasets besides SIPaKMed and SMEAR. In order to
+use another, you must convert the data to the correct format.
+
+    slides/
+        metaplastic/
+            images/
+            masks/
+        parabasal/
+            images/
+            masks/
+        ...
+
+And for cells:
+
+    cells/
+        metaplastic/
+            image/
+            mask/

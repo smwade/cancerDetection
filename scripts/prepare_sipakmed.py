@@ -16,8 +16,8 @@ def prepare_sipakmed(input_dir, out_dir):
     Prepare the data from the SIPKaMeD dataset. Puts in the form:
     slides/
         metaplastic/
-            images/
-            masks
+            image/
+            mask/
         ...
     cells/
         metaplastic/
@@ -39,7 +39,7 @@ def prepare_sipakmed(input_dir, out_dir):
     print('Adding full slides...')
     for full_cell_name, cell_name in zip(cell_types, new_cell_types):
         cur_dir = join(input_dir, full_cell_name)
-        create_dirs(join(out_dir, 'slides', cell_name), ['images', 'masks'])
+        create_dirs(join(out_dir, 'slides', cell_name), ['image', 'mask'])
         img_path_list = glob(join(cur_dir, '*.bmp'))
         for img_path in tqdm(img_path_list):
             img = read_bmp(img_path)
@@ -53,8 +53,8 @@ def prepare_sipakmed(input_dir, out_dir):
 
             mask = generate_full_mask(img, cyto_list, nuc_list)
 
-            save_img(join(out_dir, 'slides', cell_name, 'images', f'{cell_name}_{img_num}.png'), img)
-            save_img(join(out_dir, 'slides', cell_name, 'masks', f'{cell_name}_{img_num}.png'), mask)
+            save_img(join(out_dir, 'slides', cell_name, 'image', f'{cell_name}_{img_num}.png'), img)
+            save_img(join(out_dir, 'slides', cell_name, 'mask', f'{cell_name}_{img_num}.png'), mask)
 
     # save indavidual cells 
     print('Adding indavidual cells...')
