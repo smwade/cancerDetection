@@ -1,6 +1,7 @@
 import os
 from os.path import join
 import numpy as np
+import cv2
 from tqdm import tqdm
 from mediaug.image_utils import read_png, save_img
 from mediaug.download import get_data_cache
