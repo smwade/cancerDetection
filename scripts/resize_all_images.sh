@@ -8,4 +8,4 @@ echo "copying images..."
 cp -r $INPUT_DIR $OUTPUT_DIR
 cd $OUTPUT_DIR
 echo "resizing images..."
-find . -name '*.png' -execdir mogrify -resize $3x$4 {} \;
+find . -name '*.png' -execdir mogrify -resize $3x$4! {} \;

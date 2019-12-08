@@ -21,6 +21,8 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageSequence
 
+from mediaug.dataset import Dataset as MediDataset
+
 
 class Dataset():
     """Load, separate and prepare the data for training and prediction"""
@@ -40,12 +42,11 @@ class Dataset():
         self._test_images = \
             self._load_multipage_tiff(os.path.join(self._data_dir, 'test-volume.tif'))
         """
-        self._train_images = \
-            self._load_multipage_tiff(os.path.join(self._data_dir, 'train-volume.tif'))
-        self._train_masks = \
-            self._load_multipage_tiff(os.path.join(self._data_dir, 'train-labels.tif'))
-        self._test_images = \
-            self._load_multipage_tiff(os.path.join(self._data_dir, 'test-volume.tif'))
+        ds = MediDataset(self._data_dir)
+        images, masks = ds.get_array(30, n_last=True)
+        self._train_images = images
+        self._train_masks = masks
+        self._test_images = images
 
         self._num_gpus = num_gpus
         self._gpu_id = gpu_id

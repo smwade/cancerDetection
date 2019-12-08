@@ -73,7 +73,7 @@ class Dataset:
         raise NotImplementedError 
 
 
-    def get_metrix_keras_form(self, num_samples=-1):
+    def get_array(self, num_samples=-1, n_last=False):
         """ This is of the form:
         (x_train, y_train), (x_test, y_test)
         ex: (num_samples, 32, 32, 3)
@@ -85,7 +85,12 @@ class Dataset:
             for dp in tqdm(self.data[c][:num_samples]):
                 images.append(dp.img)
                 masks.append(dp.img)
-        return np.array(images), np.array(masks)
+        images = np.array(images)
+        masks = np.array(masks)
+        if n_last:
+            images = np.moveaxis(images, 0, -1)
+            masks = np.moveaxis(masks, 0, -1)
+        return images, masks
 
     @property
     def classes(self):
