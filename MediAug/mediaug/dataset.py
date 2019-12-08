@@ -73,7 +73,7 @@ class Dataset:
         raise NotImplementedError 
 
 
-    def get_array(self, num_samples=-1, n_last=False):
+    def get_array(self, num_samples=-1, n_last=False, greyscale=False):
         """ This is of the form:
         (x_train, y_train), (x_test, y_test)
         ex: (num_samples, 32, 32, 3)
@@ -83,8 +83,12 @@ class Dataset:
         masks = []
         for c in tqdm(self.classes):
             for dp in tqdm(self.data[c][:num_samples]):
-                images.append(dp.img)
-                masks.append(dp.img)
+                if greyscale == True:
+                    images.append(cv2.cvtColor(dp.img, cv2.COLOR_BGR2GRAY))
+                    masks.append(cv2.cvtColor(dp.mask, cv2.COLOR_BGR2GRAY))
+                else:
+                    images.append(dp.img)
+                    masks.append(dp.mask)
         images = np.array(images)
         masks = np.array(masks)
         if n_last:
