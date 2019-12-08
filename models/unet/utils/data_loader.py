@@ -44,7 +44,7 @@ class Dataset():
             self._load_multipage_tiff(os.path.join(self._data_dir, 'test-volume.tif'))
         """
         ds = MediDataset(self._data_dir)
-        images, masks = ds.get_array(30, n_last=False, greyscale=True)
+        images, masks = ds.get_array(400, n_last=False, greyscale=True)
         self._train_images = images
         self._train_masks = masks
         self._test_images = images

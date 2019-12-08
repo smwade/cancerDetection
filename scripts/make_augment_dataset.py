@@ -6,6 +6,7 @@ from itertools import cycle
 
 from mediaug.dataset import Dataset
 from mediaug.augment import add_cell, randomly_insert_cells
+from mediaug.image_utils import get_blank_mask
 
 
 @click.command()
@@ -17,7 +18,7 @@ from mediaug.augment import add_cell, randomly_insert_cells
 def make_augment_dataset(slide_dir, cell_dir, out_dir, num, max_cells):
     slides = Dataset(slide_dir)
     cells = Dataset(cell_dir)
-    out_dir = Dataset(out_dir, ['all'])
+    out_ds = Dataset(out_dir, ['all'])
 
     good_slides = slides['superficial-intermediate'] + slides['parabasal']
     random.shuffle(good_slides)
