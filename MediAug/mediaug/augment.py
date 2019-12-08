@@ -32,13 +32,6 @@ def get_data_generator(image_path, mask_path, batch_size=1):
     return gen
 
 
-# def pick_random_cell(ds):
-#     cell_type = random.choice(ABNORMAL_CELL_TYPES_SIP + NORMAL_CELL_TYPES_SIP)
-#     indx = randint(0, len(ds[cell_type]['imgs']))
-#     poly_list = ds[cell_type]['cytos'][indx] 
-#     return ds[cell_type]['imgs'][indx], random.choice(poly_list)
-
-
 def randomly_insert_cells(img: np.array, mask: np.array,
 							ds: Dataset, cell_names_to_add: list,
 							num_cell_range: tuple) -> np.array:
@@ -68,7 +61,7 @@ def randomly_insert_cells(img: np.array, mask: np.array,
 		angle = randint(0, 360)
 		scale = random.normalvariate(1, .2)
 		img, mask = add_cell(img, mask, cell.img, cell.mask, pos, angle, scale)
-  print(f'Adding slide with {num_cells_to_insert}')
+	print(f'Adding slide with {num_cells_to_insert}')
 	return img, mask
 
 
