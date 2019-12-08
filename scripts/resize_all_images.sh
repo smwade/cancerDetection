@@ -1,6 +1,8 @@
 #!/bin/bash
+# 
+# Make a new folder with all images resized
+# Usage: ./resize_all_images.sh <input_dir> <out_dir <width> <height>
 
-# args: input_dir
 INPUT_DIR=$1
 OUTPUT_DIR=$2
 

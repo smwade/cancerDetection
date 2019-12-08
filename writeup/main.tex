@@ -148,7 +148,7 @@
 % Because I use these things in more than one place, I created new commands for
 % them.  I did not use \providecommand because I absolutely want LaTeX to error
 % out if these already exist.
-\newcommand{\Title}{Cervical Cancer Detection with Synthetic Data}
+\newcommand{\Title}{Cervical Cancer Detection Pipeline with Synthetic Data}
 \newcommand{\Author}{Sean Wade}
 \newcommand{\GraduationMonth}{December}
 \newcommand{\GraduationYear}{2019}
@@ -184,21 +184,20 @@
 \yearcopyrighted{\GraduationYear}
 
 \documentabstract{%
-  Cervical cancer is one of the deadliest cancers amoung women worldwide. There were about 
-  270,000 deaths a year, out of which 85\% occured in developing countries. One of the
-  primary reasons of the inequality is the cost and availability of cancer screenings for early diagnosis.
-  The goal of this project is to help in the development of low cost sensors and new algorithms to detect 
-  cervical cancer for poor regions. Early diagnosis of this cancer is extreamly effective in treatment and 
-  has the potential to save many lives.
-
-  Recent advances in neural networks can be applied to the early detection of cervical cancer.
-  The primary bottleneck is the lack of labeled data and cost of generating it. This project
-  will focus on new ways of generating synthetic cell data and using it to augment state of the art computer 
-  vision algorithms.
+  Cervical cancer is one of the deadliest cancers amoung women worldwide. Every year there are over
+  250,000 deaths and 550,000 new diagnosis. These statistis are tragic because of how disproportionately
+  they effect different populations, with low to middle income countries accounting for 85\% of cervical cancer diagnosis.
+  
+  One of the primary reasons for the inequality is the cost and availability of cancer screenings. Early
+  diagnosis is extreamly effictive for treating cervical cancer. The goal of this project is to help in the
+  development of low cost sensors and new algorithms to detect cervical cancer for poor areas. My contribution in
+  this project is creating data infrastructure to prepare, augment, and train on the data. This is done through
+  the implementation or several synthetic data generation algorithms, scripts for common pipeline tasks, and developing a python package for 
+  extending the pipelie.
 }
 
 \documentkeywords{%
-    segmentation, CNN, synthetic data, data augmentation, cervical cancer, mediacl imaging
+    synthetic data, data augmentation, data pipeline, cervical cancer, medical imaging
 }
 
 \department{Computer~Science}
@@ -242,11 +241,21 @@
 
 \chapter{Introduction}
 
+Cervical cancer is one of the deadliest cancers amoung women worldwide. Every year there are over
+250,000 deaths and 550,000 new diagnosis. These statistis are tragic because of how disproportionately
+they effect different populations, with low to middle income countries accounting for 85\% of cervical cancer diagnosis.\cite{15}
+
 Cervical cancer accounts for 6.6\% of cancer cases in the world. In 2018 alone, there were well
 over 570,000 cases. Even worse is the disproportionate way populations are effected. About 85\%
-of deaths from cervical cancer came from lot to middle income countries.\cite{15}
+of deaths from cervical cancer came from lot to middle income countries.
 Fortunatly the high mortality rate from cervical cancer can be reduced by effective screening and early
 treatment.
+
+Recent advances in neural networks can be applied to the early detection of cervical cancer.
+The primary bottleneck is the lack of labeled data and cost of generating it. This project
+will focus on new ways of generating synthetic cell data and using it to augment state of the art computer 
+vision algorithms.
+
 
 \section{The Pap smear screening}
 

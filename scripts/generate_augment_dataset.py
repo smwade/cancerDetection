@@ -15,7 +15,10 @@ from mediaug.image_utils import get_blank_mask
 @click.option('--out_dir', type=click.Path(), required=True)
 @click.option('--num', type=int, required=True)
 @click.option('--max_cells', type=int, default=7)
-def make_augment_dataset(slide_dir, cell_dir, out_dir, num, max_cells):
+def generate_augment_dataset(slide_dir, cell_dir, out_dir, num, max_cells):
+    """ Adds cells to slides to produce a weekly supervised training
+    dataset for SIPaKMeD dataset.
+    """
     slides = Dataset(slide_dir)
     cells = Dataset(cell_dir)
     out_ds = Dataset(out_dir, ['all'])
@@ -27,10 +30,10 @@ def make_augment_dataset(slide_dir, cell_dir, out_dir, num, max_cells):
     bad_cells = list(set(slides.classes) - set(['superficial-intermediate', 'parabasal']))
 
     for i in range(num):
-            slide = next(slide_generator)
-            new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,max_cells))
-            out_ds.add_data(new_img, new_mask, 'all', i)
+        slide = next(slide_generator)
+        new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,max_cells))
+        out_ds.add_data(new_img, new_mask, 'all', i)
 
 
 if __name__ == '__main__':
-    make_augment_dataset()
+    generate_augment_dataset()
