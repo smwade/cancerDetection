@@ -3,6 +3,7 @@ import random
 import numpy as np
 from Augmentor.Operations import Operation
 import os
+from itertools import cycle
 from os.path import join
 from random import randint
 import random
@@ -11,7 +12,7 @@ import cv2
 from skimage import exposure
 from skimage.exposure import match_histograms
 
-from mediaug.image_utils import is_greyscale, rotate, soften_mask, image_on_image_alpha
+from mediaug.image_utils import is_greyscale, rotate, soften_mask, image_on_image_alpha, get_blank_mask
 from mediaug.dataset import Dataset
 
 def get_data_generator(image_path, mask_path, batch_size=1):
@@ -66,8 +67,8 @@ def randomly_insert_cells(img: np.array, mask: np.array,
 		pos = (randint(b, h-b), randint(b, w-b))
 		angle = randint(0, 360)
 		scale = random.normalvariate(1, .2)
-		print(pos, angle, scale)
-		img, mask = add_cell(img, mask, cell.img, cell.mask, pos, 0, 1)
+		img, mask = add_cell(img, mask, cell.img, cell.mask, pos, angle, scale)
+  print(f'Adding slide with {num_cells_to_insert}')
 	return img, mask
 
 
@@ -110,12 +111,18 @@ def add_cell(bg, bg_mask, fg, orig_fg_mask, pos, angle=0, scale=1,
     return new_img, new_mask
     
 
-def make_augemnt_dataset(ds: Dataset, out_path: str, num: int) -> Dataset:
-	out_df = Dataset(data_path=out_path, classes=ds.classes)
-	for i in range(num):
-		cur_class = ds.classes[i%len(ds.classes)]
-		
+def make_augemnt_dataset(slides: Dataset, cells: Dataset, out_path: str, num: int) -> Dataset:
+	out_ds = Dataset(data_path=out_path, classes=['all'])
+	good_slides = slides['superficial-intermediate'] + slides['parabasal']
+	random.shuffle(good_slides)
+	slide_generator = cycle(good_slides) # make infinite generator
 
+	bad_cells = list(set(slides.classes) - set(['superficial-intermediate', 'parabasal']))
+
+	for i in range(num):
+		slide = next(slide_generator)
+		new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,6))
+		out_ds.add_data(new_img, new_mask, 'all', i)
 
 
 

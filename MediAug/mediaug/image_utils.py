@@ -112,11 +112,11 @@ def place_img_on_img(bg, fg, center):
     fg_left_h = abs(min(left_h, 0))
     diff_w = bg_w - end_w
     diff_h = bg_h - end_h
-    if diff_w > 0:
+    if diff_w >= 0:
         fg_end_w = fg_w
     else:
         fg_end_w = diff_w
-    if diff_h > 0:
+    if diff_h >= 0:
         fg_end_h = fg_h
     else:
         fg_end_h = diff_h
