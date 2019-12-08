@@ -109,27 +109,3 @@ def add_cell(bg, bg_mask, fg, orig_fg_mask, pos, angle=0, scale=1,
     fg_mask[fg_mask != 0] = 255
     new_mask = image_on_image_alpha(bg_mask, orig_fg_mask, fg_mask, pos)
     return new_img, new_mask
-    
-
-def make_augemnt_dataset(slides: Dataset, cells: Dataset, out_path: str, num: int) -> Dataset:
-	out_ds = Dataset(data_path=out_path, classes=['all'])
-	good_slides = slides['superficial-intermediate'] + slides['parabasal']
-	random.shuffle(good_slides)
-	slide_generator = cycle(good_slides) # make infinite generator
-
-	bad_cells = list(set(slides.classes) - set(['superficial-intermediate', 'parabasal']))
-
-	for i in range(num):
-		slide = next(slide_generator)
-		new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,6))
-		out_ds.add_data(new_img, new_mask, 'all', i)
-
-
-
-# def create_augment_dataset(ds: Datset, out_path:path) -> Dataset:
-# 	import multiprocessing as mp
-# 	pool = mp.Pool(mp.cpu_count())
-# 	for c in ds.classes:
-# 		pool.apply(the_funtion, args=(arg1, arg2))
-# 	pool.close()
-
