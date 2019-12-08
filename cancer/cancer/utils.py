@@ -37,7 +37,6 @@ def generate_mask_from_poly(img, poly):
     ImageDraw.Draw(mask).polygon(convert_array_to_poly(poly), outline=1, fill='#ffffff')
     return np.array(mask)
 
-
 def place_img_on_img(bg, fg, offset):
     w, h = fg.shape[:2]
     bg[offset[0]:offset[0]+w, offset[1]:offset[1]+h] = fg
