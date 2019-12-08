@@ -17,7 +17,9 @@ setup(name='mediaug',
             'Augmentor',
             'numpy',
             'Pillow',
-            'cv2'
+            'opencv_python',
+            'tqdm',
+            'scikit-image'
       ],
       entry_points={
             'console_scripts': [

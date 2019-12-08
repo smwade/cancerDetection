@@ -2,24 +2,7 @@ import os
 from os.path import join
 from pathlib import Path
 import urllib.request
-import progressbar
 import zipfile
-
-# progress bar for downloading
-pbar = None
-
-def show_progress(block_num, block_size, total_size):
-    global pbar
-    if pbar is None:
-        pbar = progressbar.ProgressBar(maxval=total_size)
-        pbar.start()
-
-    downloaded = block_num * block_size
-    if downloaded < total_size:
-        pbar.update(downloaded)
-    else:
-        pbar.finish()
-        pbar = None
 
 
 def download_sipakmed(data_dest=None):
@@ -49,7 +32,7 @@ def download_sipakmed(data_dest=None):
     for url, cell_type in zip(file_urls, cell_types):
         print(f'Downloading {cell_type}...')
         file_name = f'{cell_type}.zip'
-        urllib.request.urlretrieve(url, join(data_dest, file_name), show_progress)
+        urllib.request.urlretrieve(url, join(data_dest, file_name))
 
     for file_name in data_dest:
         print(f'Extracting {file_name}...')
