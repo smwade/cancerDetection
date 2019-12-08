@@ -1,0 +1,3 @@
+[submodule "MediAug"]
+	path = MediAug
+	url = https://github.com/smwade/MediAug
