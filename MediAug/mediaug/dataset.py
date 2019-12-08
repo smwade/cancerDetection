@@ -5,6 +5,7 @@ import cv2
 from tqdm import tqdm
 from mediaug.image_utils import read_png, save_img
 from mediaug.download import get_data_cache
+from random import randint
 
 
 class DataPoint:
@@ -96,6 +97,7 @@ class Dataset:
             images = np.moveaxis(images, 0, -1)
             masks = np.moveaxis(masks, 0, -1)
         return images, masks
+    
 
     @property
     def classes(self):

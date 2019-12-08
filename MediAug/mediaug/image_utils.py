@@ -96,8 +96,8 @@ def place_img_on_img(bg, fg, center):
         raise ValueError('Center not in backgound bounds')
 
     # find top left corner of fg in respect to bg
-    left_w = cw - fg_w // 2
-    left_h = ch - fg_h // 2
+    left_w = cw - (fg_w // 2)
+    left_h = ch - (fg_h // 2)
     end_w = left_w + fg_w
     end_h = left_h + fg_h
 
@@ -110,16 +110,25 @@ def place_img_on_img(bg, fg, center):
     # for fg boundries
     fg_left_w = abs(min(left_w, 0))
     fg_left_h = abs(min(left_h, 0))
-    diff_w = abs_end_w - bg_w
-    diff_h = abs_end_h - bg_h
+    diff_w = bg_w - end_w
+    diff_h = bg_h - end_h
     if diff_w > 0:
-        fg_end_w = diff_w
-    else:
         fg_end_w = fg_w
-    if diff_h > 0:
-        fg_end_h = diff_h
     else:
+        fg_end_w = diff_w
+    if diff_h > 0:
         fg_end_h = fg_h
+    else:
+        fg_end_h = diff_h
+
+    # if diff_w > 0:
+    #     fg_end_w = diff_w
+    # else:
+    #     fg_end_w = fg_w
+    # if diff_h > 0:
+    #     fg_end_h = diff_h
+    # else:
+    #     fg_end_h = fg_h
 
     ans = np.copy(bg)
     ans[abs_left_h:abs_end_h, abs_left_w:abs_end_w] = fg[fg_left_h:fg_end_h, fg_left_w:fg_end_w]

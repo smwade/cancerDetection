@@ -1,4 +1,5 @@
 import Augmentor
+import random
 import numpy as np
 from Augmentor.Operations import Operation
 import os
@@ -11,6 +12,7 @@ from skimage import exposure
 from skimage.exposure import match_histograms
 
 from mediaug.image_utils import is_greyscale, rotate, soften_mask, image_on_image_alpha
+from mediaug.dataset import Dataset
 
 def get_data_generator(image_path, mask_path, batch_size=1):
     pipeline = Augmentor.Pipeline(image_path)
@@ -36,17 +38,37 @@ def get_data_generator(image_path, mask_path, batch_size=1):
 #     return ds[cell_type]['imgs'][indx], random.choice(poly_list)
 
 
-# def randomly_insert_cells(img):
-#     w, h = img.shape[:2]
-#     num_cells_to_insert = randint(0,3)
-#     ds = get_sipakmed(cache=True)
-#     for i in range(num_cells_to_insert):
-#         cell_path, cell_poly = pick_random_cell(ds)
-#         cell_img = read_png(cell_path)
-#         offset = (randint(0, w), randint(0, h))
-#         angle = randint(0,360)
-#         img = add_cell(img, cell_img, cell_poly, offset, angle, 0)
-#     return img
+def randomly_insert_cells(img: np.array, mask: np.array,
+							ds: Dataset, cell_names_to_add: list,
+							num_cell_range: tuple) -> np.array:
+	""" Randomly inserts cells into image
+
+	Args:
+	  img (np.array)
+	  mask (np.array)
+	  ds (Datset)
+	  num_cell_range (tuple): ex (1, 5)
+
+	Returns:
+      new_img (np.array)
+	  new_mask (np.array)
+    """
+	h, w = img.shape[:2]
+
+	cell_list = []
+	for cell_name in cell_names_to_add:
+		cell_list += ds[cell_name]
+
+	num_cells_to_insert = randint(*num_cell_range)
+	for i in range(num_cells_to_insert):
+		cell = random.choice(cell_list)
+		b = 5
+		pos = (randint(b, h-b), randint(b, w-b))
+		angle = randint(0, 360)
+		scale = random.normalvariate(1, .2)
+		print(pos, angle, scale)
+		img, mask = add_cell(img, mask, cell.img, cell.mask, pos, 0, 1)
+	return img, mask
 
 
 def add_cell(bg, bg_mask, fg, orig_fg_mask, pos, angle=0, scale=1,
@@ -86,7 +108,21 @@ def add_cell(bg, bg_mask, fg, orig_fg_mask, pos, angle=0, scale=1,
     fg_mask[fg_mask != 0] = 255
     new_mask = image_on_image_alpha(bg_mask, orig_fg_mask, fg_mask, pos)
     return new_img, new_mask
+    
+
+def make_augemnt_dataset(ds: Dataset, out_path: str, num: int) -> Dataset:
+	out_df = Dataset(data_path=out_path, classes=ds.classes)
+	for i in range(num):
+		cur_class = ds.classes[i%len(ds.classes)]
+		
 
 
-def cell_augment(ds, outdir):
-    pass
+
+
+# def create_augment_dataset(ds: Datset, out_path:path) -> Dataset:
+# 	import multiprocessing as mp
+# 	pool = mp.Pool(mp.cpu_count())
+# 	for c in ds.classes:
+# 		pool.apply(the_funtion, args=(arg1, arg2))
+# 	pool.close()
+
