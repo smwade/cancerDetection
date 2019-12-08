@@ -1,0 +1,14 @@
+FROM nvcr.io/nvidia/tensorflow:19.11-tf1-py3
+
+ADD models/unet /workspace/unet
+ADD MediAug/ /workspace/MediAug
+WORKDIR /workspace/unet
+
+RUN apt-get update
+RUN apt-get install -y libsm6 libxext6 libxrender-dev
+RUN pip install opencv-python
+
+
+RUN pip install -r requirements.txt
+WORKDIR /workspace/MediAug
+RUN pip install -e .
