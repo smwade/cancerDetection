@@ -16,6 +16,7 @@
 import math
 import os
 import multiprocessing
+import cv2
 
 import tensorflow as tf
 import numpy as np
@@ -33,7 +34,7 @@ class Dataset():
         self._augment = augment
 
         self._seed = seed
-
+        
         """
         self._train_images = \
             self._load_multipage_tiff(os.path.join(self._data_dir, 'train-volume.tif'))
@@ -43,7 +44,7 @@ class Dataset():
             self._load_multipage_tiff(os.path.join(self._data_dir, 'test-volume.tif'))
         """
         ds = MediDataset(self._data_dir)
-        images, masks = ds.get_array(30, n_last=True)
+        images, masks = ds.get_array(30, n_last=False, greyscale=True)
         self._train_images = images
         self._train_masks = masks
         self._test_images = images
@@ -60,7 +61,6 @@ class Dataset():
         return len(self._test_images)
 
     def _load_multipage_tiff(self, path):
-        """Load tiff images containing many images in the channel dimension"""
         return np.array([np.array(p) for p in ImageSequence.Iterator(Image.open(path))])
 
     def _normalize_inputs(self, inputs):

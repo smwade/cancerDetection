@@ -1,8 +1,11 @@
 import os
 from os.path import join
+import click
+import random
+from itertools import cycle
 
 from mediaug.dataset import Dataset
-from mediaug.augment import add_cell
+from mediaug.augment import add_cell, randomly_insert_cells
 
 
 @click.command()
@@ -18,14 +21,14 @@ def make_augment_dataset(slide_dir, cell_dir, out_dir, num, max_cells):
 
     good_slides = slides['superficial-intermediate'] + slides['parabasal']
     random.shuffle(good_slides)
-	slide_generator = cycle(good_slides) # make infinite generator
+    slide_generator = cycle(good_slides)
 
-	bad_cells = list(set(slides.classes) - set(['superficial-intermediate', 'parabasal']))
+    bad_cells = list(set(slides.classes) - set(['superficial-intermediate', 'parabasal']))
 
-	for i in range(num):
-		slide = next(slide_generator)
-		new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,max_cells))
-		out_ds.add_data(new_img, new_mask, 'all', i)
+    for i in range(num):
+            slide = next(slide_generator)
+            new_img, new_mask = randomly_insert_cells(slide.img, get_blank_mask(slide.img), cells, bad_cells, (0,max_cells))
+            out_ds.add_data(new_img, new_mask, 'all', i)
 
 
 if __name__ == '__main__':
