@@ -227,6 +227,8 @@
 \usepackage{subcaption} % loads the caption package
 \usepackage{amsfonts}
 \usepackage{graphicx}
+\usepackage[toc,page]{appendix}
+\usepackage{forest}
 \graphicspath{ {images/} }
 
 \usepackage{siunitx}
@@ -242,46 +244,50 @@
 \chapter{Introduction}
 
 Cervical cancer is one of the deadliest cancers amoung women worldwide. Every year there are over
-250,000 deaths and 550,000 new diagnosis. These statistis are tragic because of how disproportionately
-they effect different populations, with low to middle income countries accounting for 85\% of cervical cancer diagnosis.\cite{15}
+250,000 deaths and 550,000 new diagnosis. Another tragic aspect of these statistics is how disproportionately
+they effect different populations, with low to middle income countries accounting for 85\% of cervical cancer diagnosis.
 
-Cervical cancer accounts for 6.6\% of cancer cases in the world. In 2018 alone, there were well
-over 570,000 cases. Even worse is the disproportionate way populations are effected. About 85\%
-of deaths from cervical cancer came from lot to middle income countries.
-Fortunatly the high mortality rate from cervical cancer can be reduced by effective screening and early
-treatment.
-
-Recent advances in neural networks can be applied to the early detection of cervical cancer.
-The primary bottleneck is the lack of labeled data and cost of generating it. This project
-will focus on new ways of generating synthetic cell data and using it to augment state of the art computer 
-vision algorithms.
-
+One of the primary reasons for this inequality is the cost and availability of cancer screenings. But when caught early, cervical cancer can actually be fully cured. 
+The pre-cancerous lesions of cervical cancer take almost a decade to convert into cancerous ones, leaving a longer than usual timeline for treatment. \cite{epid}
 
 \section{The Pap smear screening}
 
 The pap-smear screening was developed by Georges Papanicolaou. Using a small brush, a cytological sample is taken from the cervix and smeared onto a thin glass slide. 
-To clarify the cells characteristics, the smear is stained using the Papanicolaou method. This emphisizes the different components of the cells with specific colors, making it more clear in a microscope.\cite{herlev2}
+To clarify the cells characteristics, the smear is stained using a special dye. This emphisizes the different components of the cells with specific colors, making it more clear in a microscope.\cite{herlev2}
 Each microscope slide contains up to 300,000 single cells with defferent orientations and overlap\cite{herlev2}. This has made automatic segmentation methods challenging.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{cells/dysketarotic_059}
+  \caption{Example Pap smear slide}
+\end{figure}
 
 \section{Project Goals}
 
-The Goal of this project is to develop a data pipeline and tools to take in raw pap-smear slide data and output1
-\begin{itemize}
-  \item 
-\end{itemize}
+The goal of this project is to help in the development of low cost sensors and new algorithms to detect cervical cancer.
+Recent advancments in image segmentation using deep neural networks provides much room for improvment on current methods.
+The primary bottleneck for this specific application is the lack of labeled data. This can be attributed to two main factors:
+cells must be segmented by skilled pathologists, which is expensive and time consuming, and strict privacy laws arround medical data.
+
+In this project I addressed these challanges by building a image pipeline to solve the labeled data problem for Pap smear slides. To make this 
+pipeline extensible to future datasets, I built the python package MediAug. By simply writing a small connector to structure the data, this library
+can take in images and augment them to an infite dataset. The augmentation methods range from simple standard practices, such as rotation, to complex methods
+like synthetic cell generation using generative adversarial neural networks.
 
 \chapter{Datasets}
 
-Due to privacy with mediacl data and effort in labeling, there are only two open Pap smear datasets. For my project I use these two and make the pipeline generalizable
+Due to privacy with mediacl data and the effort required to label, there are only two open Pap smear datasets. For my project I used these two and made the pipeline generalizable
 to future datasets.
 
-
 \section{SIPaKMeD}
-The datasets used are constructed by cyto-technicians for classification purposes. These technicians use a microsope witha resolution of  \SI{0.201}{\micro\metre} / pixel to grab every cell.
 
-The SIPaKMeD dataset consists of 996 cluser cell images of Pap smear slides. From these there are
-4049 indavidual cells that are segmented. These cells are then labeled in 5 categories: 
-(a) Dyskeratotic, (b) Koilocytotic, (c) Metaplastic, (d) Parabasal and (e) Superficial-Intermediate.
+The SIPaKMeD dataset consists of 996 cluser cell images of Pap smear slides. From these, there are
+4049 indavidual cells that are segmented cyto-technicians. The resolution of these slides is \SI{0.201}{\micro\metre} / pixel,
+with the final slide being $2048\times 1536$. The cell segmentation is stored as a array of poygons.
+
+These cells are grouped into 5 categories: 
+(a) Dyskeratotic, (b) Koilocytotic, (c) Metaplastic, (d) Parabasal and (e) Superficial-Intermediate. Out of these categories, a-c are
+cancerous and d-e are normal. A full detailed description of each class is given in the appendix.
 
 \begin{figure}[H]
   \centering
@@ -294,14 +300,10 @@ The SIPaKMeD dataset consists of 996 cluser cell images of Pap smear slides. Fro
   \caption{Cell Types}
 \end{figure}
 
-\noindent \textbf{Superficial-Intermediate cells} constitute the majority of the cells found in a Pap test. Usually they are flat with round, oval or polygonal shape cytoplasm stains mostly eosinophilic or cyanophilic. They contain a central pycnotic nucleus. They have well defined, large polygonal cytoplasm and easily recognized nuclear limits (small pycnotic in the superficial and vesicular nuclei in intermediate cells). These type of cells show the characteristics morphological changes (koilocytic atypia) due to more severe lessions.
-\\ \textbf{Parabasal cells} are immature squamous cells and they are the smallest epithelial cells seen on a typical vaginal smear. The cytoplasm is generally cyanophilic and they usually contain a large vesicular nucleus. It must be noted that parabasal cells have similar morphological characteristic with the cells identified as metaplastic cells and it is difficult to be distinguished from them.    
-\\ \textbf{Koilocytotic cells} correspond most commonly in mature squamous cells (intermediate and superficial) and some times in metaplastic type koilocytotic cells. They appear most often cyanophilic, very lightly stained and they are characterized by a large perinuclear cavity. The periphery of the cytoplasm is very dense stained. The nuclei of koilocytes are usually enlarged, eccentrically located, hyperchromatic and exhibit irregularity of the nuclear membrane contour. 
-\\ \textbf{Dysketarotic cells} are squamous cells which undergone premature abnormal keratinization within individual cells or more often in three-dimensional clusters. They exhibit a brilliant orangeophilic cytoplasm. They are characterized by the presence of vesicular nuclei, identical to the nuclei of koilcytotic cells. In many cases there are binucleated and/or multinucleated cells.
-\\ \textbf{Metaplastic Cells} are small or large parabasal-type cells with prominent cellular borders, often exhibiting eccentric nuclei and sometimes containing a large intracellular vacuole. The staining in the center portion is usually light brown and it often differs from that in the marginal portion. Also, there is essentially a darker-stained cytoplasm and they exhibit great uniformity of size and shape compared to the parabasal cells, as their characteristic is the well defined, almost round shape of cytoplasm.\cite{sipakmed}
-
 \section{Herlev}
-The Herlev dataset is comprised of 917 isolated single cell images. These are distributed unequally between seven classes of cells.  Superficial squamous epithelia, intermediate squamous epithelia, columnar epithelial, mild squamous non-keratinizing dysplasia, moderate squamous non-keratinizing dysplasia, severe squamous non-keratinizing dysplasia and squamous cell carcinoma in situ intermediate.\cite{herlev}
+
+The Herlev dataset is comprised of 917 isolated, single cell images. These are distributed unequally between seven different classes of cells. 
+Superficial squamous, intermediate squamous, columnar, mild dysplasia, moderate dysplasia, severe dysplasia and carcinoma in situ.\cite{herlev}
 
 \begin{figure}[H]
   \centering
@@ -322,29 +324,103 @@ The Herlev dataset is comprised of 917 isolated single cell images. These are di
 \section{Extensibility to future datasets}
 
 Since we are developing a low cost sensor, all these tools I made will fit the new data into the pipline. This 
-is done by simply extending the DatasetConnector class to put the data in the correct format. More details are given
-in the attached API.
+is done by simply extending the DatasetConnector class to put the data in the correct format for the Dataset class. 
+The correct format is simply:
 
+\vspace{10mm}
 
-\chapter{Background}
+\begin{forest}
+  for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, \forestoption{edge}]
+      (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1
+        {insert before={[,phantom]}}
+        {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+  }
+[newfolder
+  [class1
+    [img1.png]
+    [img2.png]
+    [...]
+  ]
+  [class2
+    [img1.png]
+    [img2.png]
+    [...]
+  ]
+  [...]
+]
+\end{forest}
 
-\section{General Data Augmentation}
+\vspace{5mm}
+% new_dataset/
+%     class_1/
+%       iamge/
+%         img1.png
+%         img2.png
+%         ...
+%       /mask
+%         img1.png
+%         img2.png
+%         ...
+%     class_2/
+%       iamge/
+%         img1.png
+%         img2.png
+%         ...
+%       /mask
+%         img1.png
+%         img2.png
+%         ...
+%       ...
 
-Data hungry neural networks make us need data augmentation. Depending on the domain of the data, severl different types 
-of data augmentaion can be used. Very tradiional is fliping and rotating the data. Otheres include random color 
-altertions, adding noise, random zooming, ect.
+More details are given in the MediAug documentation.
 
-Current automatic screening scystems that incorperate pap smear have a very similar workflow: 
-cell segmentation, cytoplasm and nuclei segmentation, feature extraction, and cell classification.
-This is very limited and very sensitive to cell overlap.
-
-Whole slide classification (no segmentation) \cite{kiran}
 
 \chapter{Synthetic Data Generation}
 
-There are lots of different manaul augmentations I do to the images...
+Augmented image datasets have become invaluable to current state of the art computer vision algorithms. Data hungry 
+neural networks require masize amounts of data to learn the match patterns in the distribution of images.
+Even in situations where there are plenty of data available it is often not labeled and synthetic data 
+is still neccesary.
+
+Another important benifit of augmenting image data is that it serves as a very effective
+means of regularization. Regularization can be defined as a modiﬁcation we make to a 
+learning algorithm that is intended to reduce generalization error, but not training error.
+With a large neural networ and small number of samples, it is very easy for a model to have high
+varience by memorizing the data. Continually perturbing, rotating, and zooming prevent this by 
+lowering the training accuray.
 
 \section{Tradidtional Data Augmentation}
+
+Traditional data augmentation relies on making small perterbations that do not comprimise
+of the symantic content of the image. Depending on the domain of the data, several different types 
+of data augmentaion can be used. This could be randomly fliping and rotating the image. Others include random color 
+altertions, adding noise, random zooming, ect. When choosing what opperations to perform it is
+important to consider if the resulting image still falls in the distribution of ones images.
+
+For Pap smear slides and cervical cells there are many ways to generate new data. Cell images are
+rotationally invarient and scale invarient, so we can randomly rotate and zoom in to differnt parts of the slide.
+In addition this data is well suited to elastic deformations and altering the colors.
+
+The MediAug package proviedes a simple API to apply traditional image augmentation operations.
+The Augmentor class takes in a Dataset and outputs augmented images. This class can be used
+as either a generator function, or it can write a out a new dataset. To choose which operations 
+the Augmentor does, you can add a step to the pipeline called an Operation. These inlude methods
+such as flipping, zooming, random cropping, and elastic distortion. An Operation also has a probability
+for happening that can be set. Bellow are several examples of these simple augmentaions on a slide.
 
 \begin{figure}[H]
   \centering
@@ -398,40 +474,62 @@ There are lots of different manaul augmentations I do to the images...
 
 \section{Inserting Cells}
 
-This is where I randomly crop and segment labeled cells in other images. I place them onto
-the image. To help it blend in more I take the hard segmentation boundy and dialate the mask.
-I then do a Guassian filter to blur the opacity so it is not just a hard border on the
-inserted images.
+The primary use case this pipeline is built for is segmenting cancerous cells on a slide.
+Both availabld datasets are not sufficent to solve this task. The SIPaKMeD dataset has some
+of the cells labeled, but not all. This results in negative signals for correct segmentations
+while training.
 
-current challanges:
+MediAug is able to address this problem by inserting known cells and masks onto slides.
+Since we know the ground truth for a health slide is no segmentation, we can then add 
+random cancerous cells with their corresponding segmentation to the slide. This is a weakly 
+supervised data augmentation method that can gives us the dataset we want.
 
-\begin{itemize}
-  \item different size cells from different samples
-  \item dosnt fit into the context when put randomly
-  \item there are different colors of die that are not consistant accross classes (color correct somehow?)
-  \item placing above other cells
-\end{itemize}
+When a Dataset is created, you can specify which classes of slides to use and what classes of cells.
+There are then a variety of hyperparameters such as range of the amount of cells to add, rotation, scale, ect.
+To help the cells blend in once inserted I dialate the cell mask and then do a guassian blur kernel. I then use
+the result as an alpha mask to blend it in so the edges are not as sharp. These parameters need to be adjusted to
+get the best resuts.
+
+\begin{figure}[H]
+  \centering
+  \subcaptionbox*{}{\includegraphics[width=.41\textwidth]{add_cells/7}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.41\textwidth]{add_cells/7-mask}} 
+
+  \subcaptionbox*{}{\includegraphics[width=.41\textwidth]{add_cells/71}} \quad
+  \subcaptionbox*{}{\includegraphics[width=.41\textwidth]{add_cells/71-mask}}
+
+  \subcaptionbox*{Image}{\includegraphics[width=.41\textwidth]{add_cells/81}} \quad
+  \subcaptionbox*{Mask}{\includegraphics[width=.41\textwidth]{add_cells/81-mask}} 
+  \caption{Inserted cell examples}
+\end{figure}
+
 
 \section{Conditional Generative Adversarial Networks}
 
-Generative adversarial networks, GANs, are generative models that learn a mapping from 
-a random noise vector $z$ to output image $y$, $G : z \rightarrow y$. A traditional GAN
-can be broken down into 2 networks, the generator and the discriminator. The generator is $G$ 
-described above. The goal of the discriminator is to take in a generated and real image and 
-classify which is real.
-
-Conditional GANs differ from this learning a mapping from an observed image, $x$, and a random noise vector $z$. This 
-gives $G: \{ x, z \} \rightarrow y$. Mathematically the objective funcitn of a conditional GAN can be expressed as
-
-$$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 - D(x, G(x, z))]$$
-
-\subsection{Pix2Pix}
+Another major contribution to the package is using generative adversarial networks (GANs) to
+generate completly new images and their corresponding segmentation masks. To do this I implemented
+the Pix2Pix conditional GAN paper \cite{pix2pix}. The high level idea is given an input image and random vector, the network
+will produce and output image that is drawn from the data distribution condtional on the input image. For my 
+case the input was the mask of a cell and the output was the image of the cell. With this GAN trained I can
+generate new cwll images and know their segmentation map.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{pix2pix}
   \caption{Pix2Pix Archetecture \cite{pix2pix-image}}
 \end{figure}
+
+More specifically we are learning a mapping from an observed image, $x$, and a random noise vector $z$. This 
+gives $G: \{ x, z \} \rightarrow y$. The noise vector is important because otherwise this would just be deterministic.
+By picking $z$ we are randomly sampling from a distibution of cells with this shape. 
+As illustraited above the archetecture has two networks, the generator $G$ and descriminator $D$. The generator
+produces $y$ and the descriminiator takes in a real $y$ and generated $y$ D and gives an estimate of the 
+probability that $y$ is real
+
+Mathematically the objective function of a conditional GAN can be expressed as:
+
+$$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 - D(x, G(x, z))]$$
+
 
 \begin{figure}[H]
   \centering
@@ -472,7 +570,11 @@ $$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/2-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/2-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/2-targets}} 
+  \caption{Cell generation from input mask}
 
+\end{figure}
+\begin{figure}[H]
+  \centering
 
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/3-inputs}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/3-inputs}} \quad
@@ -486,42 +588,60 @@ $$\mathcal{L}_{cGAN} = \mathbb{E}_{x,y}[\log D(x,y)] + \mathbb{E}_{x,z}[\log (1 
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/3-outputs}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/3-outputs}} 
 
-\end{figure}
-\newpage
-\begin{figure}[H]
-  \centering
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/dyskeratotic/3-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/koilocytotic/3-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/metaplastic/3-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/parabasal/3-targets}} \quad
   \subcaptionbox*{}{\includegraphics[width=.17\textwidth]{pix2pix/superficial-intermediate/3-targets}} 
+  \caption{Cell generation from input mask}
 \end{figure}
 
-\chapter{Segmentation Model}
+The generated synthetic cells above were trained with asegmnetation mask and cell not in the training
+data. This similarity between the generated and real shows how well the GAN works. To additionally verify
+the value of the synthetic data, a simple convolutional neural network was trained on only synthetic images
+and told to classify the cell. Once trained the networks accuracy was compared using sythetic test data and real test
+data, and both were within 1\%.
 
-\section{Convolutional Neural Network}
+% \section{Convolutional Neural Network}
 
-\section{Unet Segmentaion}
+% \section{Unet Segmentaion}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.75\textwidth]{unet}
-  \caption{Unet Archetecture}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=.75\textwidth]{unet}
+%   \caption{Unet Archetecture}
+% \end{figure}
 
-\chapter{Experiments and Results}
+% \chapter{Experiments and Results}
 
-Trainging a cnn model on synthetic. giving it real data to predict gives
-accuracy of .2409. The real one is .2589
+% Trainging a cnn model on synthetic. giving it real data to predict gives
+% accuracy of .2409. The real one is .2589
 
-\textbf{Cell 5 part classification: CNN}
+% \textbf{Cell 5 part classification: CNN}
 
-loss: 0.0116 \\
-acc: 0.9953 \\
-val loss 0.2423 \\
-val acc: 0.9513
+% loss: 0.0116 \\
+% acc: 0.9953 \\
+% val loss 0.2423 \\
+% val acc: 0.9513
 
-\chapter{Future Work}
+\chapter{Conclusion}
+
+Going forward in cervical cancer research, the pipline I created will be very useful.
+The MediAug package provides tools to create weekly supervised training sets that are
+infinite in size. The APi to do this allows the user to tune rotation, position, scale, and alpha.
+To further stretch the limited value of the limited data, scripts are provided to train
+a condtional GAN to create completly new cells.
+
+\begin{appendices}
+  \chapter{Cell Type Descriptions}
+
+  \noindent \textbf{Superficial-Intermediate cells} constitute the majority of the cells found in a Pap test. Usually they are flat with round, oval or polygonal shape cytoplasm stains mostly eosinophilic or cyanophilic. They contain a central pycnotic nucleus. They have well defined, large polygonal cytoplasm and easily recognized nuclear limits (small pycnotic in the superficial and vesicular nuclei in intermediate cells). These type of cells show the characteristics morphological changes (koilocytic atypia) due to more severe lessions.
+  \\ \textbf{Parabasal cells} are immature squamous cells and they are the smallest epithelial cells seen on a typical vaginal smear. The cytoplasm is generally cyanophilic and they usually contain a large vesicular nucleus. It must be noted that parabasal cells have similar morphological characteristic with the cells identified as metaplastic cells and it is difficult to be distinguished from them.    
+  \\ \textbf{Koilocytotic cells} correspond most commonly in mature squamous cells (intermediate and superficial) and some times in metaplastic type koilocytotic cells. They appear most often cyanophilic, very lightly stained and they are characterized by a large perinuclear cavity. The periphery of the cytoplasm is very dense stained. The nuclei of koilocytes are usually enlarged, eccentrically located, hyperchromatic and exhibit irregularity of the nuclear membrane contour. 
+  \\ \textbf{Dysketarotic cells} are squamous cells which undergone premature abnormal keratinization within individual cells or more often in three-dimensional clusters. They exhibit a brilliant orangeophilic cytoplasm. They are characterized by the presence of vesicular nuclei, identical to the nuclei of koilcytotic cells. In many cases there are binucleated and/or multinucleated cells.
+  \\ \textbf{Metaplastic Cells} are small or large parabasal-type cells with prominent cellular borders, often exhibiting eccentric nuclei and sometimes containing a large intracellular vacuole. The staining in the center portion is usually light brown and it often differs from that in the marginal portion. Also, there is essentially a darker-stained cytoplasm and they exhibit great uniformity of size and shape compared to the parabasal cells, as their characteristic is the well defined, almost round shape of cytoplasm.\cite{sipakmed}
+
+\end{appendices}
 
 \bibliographystyle{plainnat}
 \bibliography{bib}
