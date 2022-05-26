@@ -8,7 +8,7 @@ scipy<1.2.0
 scikit-learn
 scikit-image
 Pillow
-tensorflow-gpu==1.14
+tensorflow-gpu==2.7.2
 keras
 git+https://www.github.com/keras-team/keras-contrib.git
 torch
