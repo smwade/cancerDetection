@@ -1,54 +1,64 @@
-# Cancer Project
+# Cervical Cancer Detection
 
-## Overview
+Automated cervical cancer detection from Pap smear slides using deep learning. This project tackles the challenge of making cancer screening accessible to low-resource communities by building models that can classify cell images as normal, abnormal, or benign.
 
-Cervical cancer is one of the daeliest cancers amound women worldwide. Fortunatly, it is also one of the most preventative.
-Using a Pap-smear test, trained technicians can detect cancerous cells early in devopment and provide life saving treatment.
-T. In 2018 alone, there were well over 570,000 cases of cervical cancer. Out of these a staggaring 90% were from low to middle income
-countries. This highlights a crucial factor for stopping this cancer: cost and availability.
+## Motivation
 
-The goal of this project is to help make pap-smear tests and diagnosis available to poor communities. I will be focusing on algorithms
-to detect the cancer. A key challange in this is lack of data. Lots of the work is augmenting the existing data and creating synthetic
-datasets as well. 
+Cervical cancer is one of the deadliest cancers among women worldwide, yet it is also one of the most preventable. Using Pap smear tests, trained technicians can detect cancerous cells early and provide life-saving treatment. In 2018 alone, there were over 570,000 cases of cervical cancer, with a staggering 90% occurring in low- to middle-income countries. This highlights a critical need: cost-effective, automated screening.
+
+## Approach
+
+This project explores multiple deep learning architectures for cell classification:
+
+- **CNN** - Baseline convolutional neural network
+- **U-Net** - Segmentation-based approach
+- **Pix2Pix** - GAN-based synthetic data generation
+- **SinGAN** - Single image GAN for data augmentation
+
+A key challenge is the lack of labeled data. Much of this work focuses on augmenting existing datasets and creating synthetic training data using the [MediAug](https://github.com/smwade/MediAug) toolkit.
+
+## Project Structure
+
+```
+cancerDetection/
+  models/
+    cnn/          # Baseline CNN classifier
+    pix2pix/      # GAN for mask-to-image generation
+    singan/       # Single image GAN augmentation
+    unet/         # U-Net segmentation model
+  notebooks/      # Data exploration and visualization
+  scripts/        # Training and evaluation scripts
+  MediAug/        # Data augmentation submodule
+```
 
 ## Datasets
 
-###  SMEAR
+### SMEAR
 
-The SMEAR dataset is 917 indavidual cells. They are segmented by nucleus and cytoplasm.
+917 individual cells segmented by nucleus and cytoplasm.
+[Download](https://mde-lab.aegean.gr/downloads)
 
-<https://mde-lab.aegean.gr/downloads>
+### SIPaKMeD
 
-### SPIaKMeD
+4,049 images of isolated cells manually cropped from 966 cluster cell images, divided into five categories (normal, abnormal, benign).
+[Download](http://cs.uoi.gr/~marina/sipakmed.html)
 
-The SIPaKMeD Database consists of 4049 images of isolated cells that have been manually cropped from 966 cluster cell images of Pap smear slides. These images were acquired through a CCD camera adapted to an optical microscope. The cell images are divided into five categories containing normal, abnormal and benign cells.
+## Installation
 
-<http://cs.uoi.gr/~marina/sipakmed.html>
-
-## Install
-
+```bash
+git clone https://github.com/smwade/cancerDetection
+cd cancerDetection
+pip install -r requirements.txt
 ```
-python prepare_data.py --input_dir ~/projects/cancerDetection/data/SIPaKMeD/ --out_dir ~/projects/cancerDetection/data/sipkamed_processed
 
+### Data Preparation
+
+```bash
+python prepare_data.py \
+  --input_dir data/SIPaKMeD/ \
+  --out_dir data/sipakmed_processed
 ```
 
-## Custom Dataset
+## Related Work
 
-The data pipeline can work with other datasets besides SIPaKMed and SMEAR. In order to
-use another, you must convert the data to the correct format.
-
-    slides/
-        metaplastic/
-            images/
-            masks/
-        parabasal/
-            images/
-            masks/
-        ...
-
-And for cells:
-
-    cells/
-        metaplastic/
-            image/
-            mask/
+- [MediAug](https://github.com/smwade/MediAug) - The data augmentation toolkit built alongside this project
